@@ -1,0 +1,134 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:best-practices"
+  ],
+  "schedule": [
+    "* 0-5 * * 0,6"
+  ],
+  "prConcurrentLimit": 0,
+  "automerge": false,
+  "dependencyDashboard": true,
+  "rangeStrategy": "bump",
+  "labels": [
+    "dependencies"
+  ],
+  "pruneStaleBranches": true,
+  "packageRules": [
+    {
+      "groupName": "Next.js ecosystem",
+      "description": "Update Next.js, React, and related packages together",
+      "matchPackageNames": [
+        "next",
+        "react",
+        "react-dom",
+        "@types/react",
+        "@types/react-dom"
+      ],
+      "matchPackagePatterns": [
+        "@next/*"
+      ],
+      "separateMinorPatch": false
+    },
+    {
+      "groupName": "TypeScript and build tools",
+      "description": "Update TypeScript and development dependencies",
+      "matchPackageNames": [
+        "typescript",
+        "@types/bun",
+        "@types/node"
+      ],
+      "matchPackagePatterns": [
+        "@types/*"
+      ],
+      "separateMinorPatch": false
+    },
+    {
+      "groupName": "Database and backend",
+      "description": "Update database and backend dependencies",
+      "matchPackageNames": [
+        "drizzle-orm",
+        "drizzle-kit",
+        "postgres"
+      ],
+      "separateMinorPatch": false
+    },
+    {
+      "groupName": "Payment and security",
+      "description": "Update payment processing and security libraries",
+      "matchPackageNames": [
+        "stripe",
+        "bcryptjs",
+        "jose"
+      ],
+      "separateMinorPatch": false
+    },
+    {
+      "groupName": "UI and styling",
+      "description": "Update UI libraries and styling tools",
+      "matchPackageNames": [
+        "tailwindcss",
+        "@tailwindcss/postcss",
+        "postcss",
+        "autoprefixer",
+        "tailwind-merge",
+        "tw-animate-css",
+        "clsx",
+        "class-variance-authority"
+      ],
+      "matchPackagePatterns": [
+        "radix-ui/*",
+        "lucide-react"
+      ],
+      "separateMinorPatch": false
+    },
+    {
+      "groupName": "Development tools",
+      "description": "Update development and utility dependencies",
+      "matchPackageNames": [
+        "dotenv",
+        "server-only",
+        "swr",
+        "zod"
+      ],
+      "separateMinorPatch": false
+    },
+    {
+      "groupName": "Security updates",
+      "description": "High priority security updates",
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "matchCurrentVersion": "!/^0/",
+      "vulnerabilityAlerts": true,
+      "schedule": [
+        "* * * * *"
+      ]
+    }
+  ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": [
+      "* 0-5 * * 0"
+    ]
+  },
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "schedule": [
+      "* * * * *"
+    ]
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "(^|/)drizzle\\.config\\.[jt]s$"
+      ],
+      "matchStrings": [
+        "\"schema\": \"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "npm",
+      "depNameTemplate": "drizzle-kit"
+    }
+  ]
+}
