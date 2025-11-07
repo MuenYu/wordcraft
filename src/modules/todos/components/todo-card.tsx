@@ -1,4 +1,5 @@
 import { Calendar, Edit, Image as ImageIcon } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -104,8 +105,13 @@ export function TodoCard({ todo }: TodoCardProps) {
 
 				{todo.imageUrl && (
 					<div className="mt-3">
-						{/** biome-ignore lint/performance/noImgElement: <it's okay to use img element> */}
-						<img src={todo.imageUrl} alt={todo.imageAlt || 'Todo image'} className="max-w-full h-auto rounded-md max-h-48 object-cover" />
+						<Image
+							src={todo.imageUrl}
+							alt={todo.imageAlt || 'Todo image'}
+							width={400}
+							height={200}
+							className="max-w-full h-auto rounded-md max-h-48 object-cover"
+						/>
 					</div>
 				)}
 			</CardContent>

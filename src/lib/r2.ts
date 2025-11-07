@@ -7,7 +7,7 @@ export interface UploadResult {
 	error?: string;
 }
 
-export async function uploadToR2(file: File, folder: string = 'uploads'): Promise<UploadResult> {
+export async function uploadToR2(file: File, folder = 'uploads'): Promise<UploadResult> {
 	try {
 		const { env } = await getCloudflareContext();
 
@@ -43,6 +43,7 @@ export async function uploadToR2(file: File, folder: string = 'uploads'): Promis
 		}
 
 		// Return public URL of R2 (should be using custom domain)
+
 		const publicUrl = `https://${(env as any).CLOUDFLARE_R2_URL}/${key}`;
 
 		return {
@@ -69,4 +70,5 @@ export async function getFromR2(key: string): Promise<R2Object | null> {
 	}
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 export async function listR2Files() {}

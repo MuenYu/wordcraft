@@ -15,6 +15,8 @@ export async function middleware(request: NextRequest) {
 
 		return NextResponse.next();
 	} catch (_error) {
+		// TODO: to pass lint temporarily
+		console.error('Middleware session validation error:', _error);
 		// If session validation fails, redirect to login
 		return NextResponse.redirect(new URL('/login', request.url));
 	}

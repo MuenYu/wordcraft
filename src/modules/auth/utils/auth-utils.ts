@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/style/noNonNullAssertion: <we will make sure it's not null> */
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
@@ -34,7 +33,9 @@ async function getAuth() {
 		socialProviders: {
 			google: {
 				enabled: true,
+
 				clientId: env.GOOGLE_CLIENT_ID!,
+
 				clientSecret: env.GOOGLE_CLIENT_SECRET!,
 			},
 		},

@@ -13,7 +13,7 @@ export const signUpSchema = signInSchema.extend({
 
 export type SignUpSchema = z.infer<typeof signUpSchema>;
 
-export type AuthResponse = {
+export interface AuthResponse {
 	success: boolean;
 	message: string;
-};
+}

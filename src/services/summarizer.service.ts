@@ -18,7 +18,7 @@ export const summarizeRequestSchema = z.object({
 type SummaryStyles = z.infer<typeof summarizerConfigSchema>['style'];
 export type SummarizeRequest = z.infer<typeof summarizeRequestSchema>;
 export type SummarizerConfig = z.infer<typeof summarizerConfigSchema>;
-export type SummaryResult = {
+export interface SummaryResult {
 	summary: string;
 	originalLength: number;
 	summaryLength: number;
@@ -26,9 +26,10 @@ export type SummaryResult = {
 		input: number;
 		output: number;
 	};
-};
+}
 
 export class SummarizerService {
+	// eslint-disable-next-line no-unused-vars
 	constructor(private readonly ai: Ai) {}
 
 	async summarize(text: string, config?: SummarizerConfig): Promise<SummaryResult> {
@@ -71,7 +72,7 @@ export class SummarizerService {
 		};
 
 		return `You are a professional text summarizer. ${styleInstructructions[style as keyof typeof styleInstructructions]}
-        
+
                 Instructions:
                     - Summarize in ${language}
                     - Keep the summary under ${maxLength} words

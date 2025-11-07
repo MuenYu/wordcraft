@@ -20,14 +20,14 @@ import { createTodoAction } from '../actions/create-todo.action';
 import { updateTodoAction } from '../actions/update-todo.action';
 import { AddCategory } from './add-category';
 
-type Category = {
+interface Category {
 	id: number;
 	name: string;
 	color: string | null;
 	description: string | null;
 	createdAt: string;
 	updatedAt: string;
-};
+}
 
 interface TodoFormProps {
 	categories: Category[];

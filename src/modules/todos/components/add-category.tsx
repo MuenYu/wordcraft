@@ -18,15 +18,18 @@ import { createCategory } from '../actions/create-category.action';
 const addCategorySchema = insertCategorySchema.omit({ userId: true });
 type AddCategoryFormData = z.infer<typeof addCategorySchema>;
 
+interface Category {
+	id: number;
+	name: string;
+	color: string | null;
+	description: string | null;
+	createdAt: string;
+	updatedAt: string;
+}
+
 interface AddCategoryProps {
-	onCategoryAdded: (category: {
-		id: number;
-		name: string;
-		color: string | null;
-		description: string | null;
-		createdAt: string;
-		updatedAt: string;
-	}) => void;
+	// eslint-disable-next-line no-unused-vars
+	onCategoryAdded: (category: Category) => void;
 }
 
 export function AddCategory({ onCategoryAdded }: AddCategoryProps) {
