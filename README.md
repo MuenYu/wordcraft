@@ -107,7 +107,7 @@ src/
 ### 1. Prerequisites
 
 - **Cloudflare Account** - [Sign up for free](https://dash.cloudflare.com/sign-up)
-- **Node.js 20+** and **pnpm** installed
+- **Node.js 20+** and **bun** installed
 - **Google OAuth App** - For authentication setup
 
 ### 2. Create Cloudflare API Token
@@ -138,7 +138,7 @@ git clone https://github.com/ifindev/fullstack-next-cloudflare.git
 cd fullstack-next-cloudflare
 
 # Install dependencies
-pnpm install
+bun install
 ```
 
 ### 4. Environment Configuration
@@ -374,20 +374,20 @@ echo "your-r2-url" | wrangler secret put CLOUDFLARE_R2_URL
 
 ```bash
 # Generate Cloudflare bindings for TypeScript
-pnpm run cf-typegen
+bun run cf-typegen
 ```
 
 **Initialize Database:**
 
 ```bash
 # Generate initial migration from schema
-pnpm run db:generate
+bun run db:generate
 
 # Apply migrations to local database
-pnpm run db:migrate:local
+bun run db:migrate:local
 
 # Verify database structure
-pnpm run db:inspect:local
+bun run db:inspect:local
 ```
 
 **Optional: Seed Sample Data**
@@ -407,13 +407,13 @@ INSERT INTO todos (id, title, description, completed, created_at, updated_at) VA
 
 ```bash
 # Terminal 1: Start Wrangler (provides D1 access)
-pnpm run wrangler:dev
+bun run wrangler:dev
 
 # Terminal 2: Start Next.js (provides HMR)
-pnpm run dev
+bun run dev
 
 # Alternative: Single command (no HMR)
-pnpm run dev:cf
+bun run dev:cf
 ```
 
 **Verify Everything Works:**
@@ -421,7 +421,7 @@ pnpm run dev:cf
 1. Open `http://localhost:3000`
 2. Test authentication flow
 3. Create a todo item
-4. Check database: `pnpm run db:studio:local`
+4. Check database: `bun run db:studio:local`
 
 ### Step 7: Set Up GitHub Actions (Optional)
 
@@ -439,10 +439,10 @@ Go to your GitHub repository → Settings → Secrets and add:
 
 ```bash
 # Apply migrations to production
-pnpm run db:migrate:prod
+bun run db:migrate:prod
 
 # Verify production database
-pnpm run db:inspect:prod
+bun run db:inspect:prod
 ```
 
 ## 🔧 Advanced Manual Configuration
@@ -508,23 +508,23 @@ wrangler r2 bucket cors put your-app-bucket --file cors.json
 
 ```bash
 # 1. Generate Cloudflare types (run after any wrangler.jsonc changes)
-pnpm run cf-typegen
+bun run cf-typegen
 
 # 2. Apply database migrations
-pnpm run db:migrate:local
+bun run db:migrate:local
 
 # 3. Build the application for Cloudflare
-pnpm run build:cf
+bun run build:cf
 ```
 
 ### Daily Development
 
 ```bash
 # Terminal 1: Start Wrangler for D1 database access
-pnpm run wrangler:dev
+bun run wrangler:dev
 
 # Terminal 2: Start Next.js development server with HMR
-pnpm run dev
+bun run dev
 ```
 
 **Development URLs:**
@@ -536,66 +536,66 @@ pnpm run dev
 
 ```bash
 # Single command - Cloudflare runtime (no HMR)
-pnpm run dev:cf
+bun run dev:cf
 
 # Test with remote Cloudflare resources
-pnpm run dev:remote
+bun run dev:remote
 ```
 
 ## 📜 Available Scripts
 
 ### **Core Development**
 
-| Script                  | Description                            |
-| ----------------------- | -------------------------------------- |
-| `pnpm dev`              | Start Next.js with HMR                 |
-| `pnpm run build:cf`     | Build for Cloudflare Workers           |
-| `pnpm run wrangler:dev` | Start Wrangler for local D1 access     |
-| `pnpm run dev:cf`       | Combined build + Cloudflare dev server |
+| Script                 | Description                            |
+| ---------------------- | -------------------------------------- |
+| `bun dev`              | Start Next.js with HMR                 |
+| `bun run build:cf`     | Build for Cloudflare Workers           |
+| `bun run wrangler:dev` | Start Wrangler for local D1 access     |
+| `bun run dev:cf`       | Combined build + Cloudflare dev server |
 
 ### **Database Operations**
 
-| Script                                        | Description                      |
-| --------------------------------------------- | -------------------------------- |
-| `pnpm run db:generate`                        | Generate new migration           |
-| `pnpm run db:generate:named "migration_name"` | Generate named migration         |
-| `pnpm run db:migrate:local`                   | Apply migrations to local D1     |
-| `pnpm run db:migrate:preview`                 | Apply migrations to preview      |
-| `pnpm run db:migrate:prod`                    | Apply migrations to production   |
-| `pnpm run db:studio:local`                    | Open Drizzle Studio for local DB |
-| `pnpm run db:inspect:local`                   | List local database tables       |
-| `pnpm run db:reset:local`                     | Reset local database             |
+| Script                                       | Description                      |
+| -------------------------------------------- | -------------------------------- |
+| `bun run db:generate`                        | Generate new migration           |
+| `bun run db:generate:named "migration_name"` | Generate named migration         |
+| `bun run db:migrate:local`                   | Apply migrations to local D1     |
+| `bun run db:migrate:preview`                 | Apply migrations to preview      |
+| `bun run db:migrate:prod`                    | Apply migrations to production   |
+| `bun run db:studio:local`                    | Open Drizzle Studio for local DB |
+| `bun run db:inspect:local`                   | List local database tables       |
+| `bun run db:reset:local`                     | Reset local database             |
 
 ### **Deployment & Production**
 
-| Script                    | Description                          |
-| ------------------------- | ------------------------------------ |
-| `pnpm run deploy`         | Deploy to production                 |
-| `pnpm run deploy:preview` | Deploy to preview environment        |
-| `pnpm run cf-typegen`     | Generate Cloudflare TypeScript types |
-| `pnpm run cf:secret`      | Add secrets to Cloudflare Workers    |
+| Script                   | Description                          |
+| ------------------------ | ------------------------------------ |
+| `bun run deploy`         | Deploy to production                 |
+| `bun run deploy:preview` | Deploy to preview environment        |
+| `bun run cf-typegen`     | Generate Cloudflare TypeScript types |
+| `bun run cf:secret`      | Add secrets to Cloudflare Workers    |
 
 ### **Development Order**
 
 **First-time setup:**
 
-1. `pnpm run cf-typegen` - Generate types
-2. `pnpm run db:migrate:local` - Setup database
-3. `pnpm run build:cf` - Build application
+1. `bun run cf-typegen` - Generate types
+2. `bun run db:migrate:local` - Setup database
+3. `bun run build:cf` - Build application
 
 **Daily development:**
 
-1. `pnpm run wrangler:dev` - Start D1 access (Terminal 1)
-2. `pnpm run dev` - Start Next.js with HMR (Terminal 2)
+1. `bun run wrangler:dev` - Start D1 access (Terminal 1)
+2. `bun run dev` - Start Next.js with HMR (Terminal 2)
 
 **After schema changes:**
 
-1. `pnpm run db:generate` - Generate migration
-2. `pnpm run db:migrate:local` - Apply to local DB
+1. `bun run db:generate` - Generate migration
+2. `bun run db:migrate:local` - Apply to local DB
 
 **After wrangler.jsonc changes:**
 
-1. `pnpm run cf-typegen` - Regenerate types
+1. `bun run cf-typegen` - Regenerate types
 
 ## 🤖 AI Development & Testing
 
@@ -678,9 +678,9 @@ Cloudflare Workers AI supports various models:
 ```bash
 # 1. Modify schema files in src/db/schemas/
 # 2. Generate migration
-pnpm run db:generate:named "add_user_table"
+bun run db:generate:named "add_user_table"
 # 3. Apply to local database
-pnpm run db:migrate:local
+bun run db:migrate:local
 # 4. Test your changes
 # 5. Commit and deploy (migrations run automatically)
 ```
@@ -690,7 +690,7 @@ pnpm run db:migrate:local
 ```bash
 # 1. Update wrangler.jsonc with new resources
 # 2. Regenerate types
-pnpm run cf-typegen
+bun run cf-typegen
 # 3. Update your code to use new bindings
 ```
 
@@ -698,9 +698,9 @@ pnpm run cf-typegen
 
 ```bash
 # Add secrets to production environment
-pnpm run cf:secret BETTER_AUTH_SECRET
-pnpm run cf:secret GOOGLE_CLIENT_ID
-pnpm run cf:secret GOOGLE_CLIENT_SECRET
+bun run cf:secret BETTER_AUTH_SECRET
+bun run cf:secret GOOGLE_CLIENT_ID
+bun run cf:secret GOOGLE_CLIENT_SECRET
 ```
 
 ## 📊 Performance & Monitoring
@@ -745,10 +745,10 @@ git push origin main
 
 ```bash
 # Deploy to production
-pnpm run deploy
+bun run deploy
 
 # Deploy to preview environment
-pnpm run deploy:preview
+bun run deploy:preview
 ```
 
 ## ✍️ Todos

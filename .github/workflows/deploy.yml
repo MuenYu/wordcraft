@@ -8,7 +8,7 @@ on:
 
 env:
   NODE_VERSION: '20'
-  PNPM_VERSION: '8'
+  BUN_VERSION: '1.2'
 
 jobs:
   # Deploy preview for pull requests
@@ -21,16 +21,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v1
         with:
-          version: ${{ env.PNPM_VERSION }}
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: 'bun'
 
       - name: Cache OpenNext build
         uses: actions/cache@v4
@@ -38,15 +38,15 @@ jobs:
           path: |
             .next/cache
             .open-next
-          key: ${{ runner.os }}-opennext-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('**/*.[jt]s', '**/*.[jt]sx', '**/*.ts', '**/*.tsx') }}
+          key: ${{ runner.os }}-opennext-${{ hashFiles('bun.lockb') }}-${{ hashFiles('**/*.[jt]s', '**/*.[jt]sx', '**/*.ts', '**/*.tsx') }}
           restore-keys: |
-            ${{ runner.os }}-opennext-${{ hashFiles('pnpm-lock.yaml') }}-
+            ${{ runner.os }}-opennext-${{ hashFiles('bun.lockb') }}-
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: bun install --no-frozen-lockfile
 
       - name: Build application
-        run: pnpm run preview:cf
+        run: bun run preview:cf
         env:
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
@@ -105,31 +105,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v1
         with:
-          version: ${{ env.PNPM_VERSION }}
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: 'bun'
 
       - name: Cache Next.js build
         uses: actions/cache@v4
         with:
           path: |
             .next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('**/*.[jt]s', '**/*.[jt]sx', '**/*.ts', '**/*.tsx') }}
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('bun.lockb') }}-${{ hashFiles('**/*.[jt]s', '**/*.[jt]sx', '**/*.ts', '**/*.tsx') }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-
+            ${{ runner.os }}-nextjs-${{ hashFiles('bun.lockb') }}-
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: bun install --no-frozen-lockfile
 
       - name: Build application
-        run: pnpm run build:cf
+        run: bun run build:cf
         env:
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
