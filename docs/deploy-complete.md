@@ -5,28 +5,30 @@
 This is a comprehensive CI/CD pipeline for deploying a Next.js app to Cloudflare Workers with three different environments:
 
 ### 1. **Test Job** (runs first for all pushes/PRs):
+
 - Runs type checking, linting, and tests
 - Builds the Next.js app to ensure it compiles
 - Must pass before any deployment happens
 
 ### 2. **Deploy-Preview** (for Pull Requests):
+
 - Creates a temporary preview deployment when you open a PR
 - Deploys to a preview environment (e.g., `https://next-cf-app-preview.your-subdomain.workers.dev`)
 - Automatically comments on the PR with the preview URL
 - Lets you test changes before merging
 
 ### 3. **Deploy-Staging** (for `develop` branch):
+
 - Deploys to a staging environment when you push to `develop` branch
 - Includes database backups and migration handling
 - Used for testing in a production-like environment
 
 ### 4. **Deploy-Production** (for `main` branch):
+
 - Deploys to production when you push to `main` branch
 - Most comprehensive with pre-deployment checks, database backups, migrations, and post-deployment verification
 
-
 ```yml
-
 # .github/workflows/deploy.yml
 name: Deploy Next.js App to Cloudflare
 
@@ -145,7 +147,7 @@ jobs:
 
   # Deploy to staging (develop branch)
   deploy-staging:
-    name: Deploy Staging  
+    name: Deploy Staging
     needs: test
     if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
@@ -262,11 +264,11 @@ jobs:
         id: migration-check
         run: |
           echo "Checking for pending migrations..."
-          
+
           # List current migrations in database
           echo "Current applied migrations:"
           pnpm exec wrangler d1 execute next-cf-app --command="SELECT name FROM d1_migrations ORDER BY applied_at;" || echo "No migrations table found"
-          
+
           # Check if there are pending migrations
           if pnpm exec wrangler d1 migrations list next-cf-app | grep -q "No migrations"; then
             echo "No pending migrations found"
@@ -284,7 +286,7 @@ jobs:
         run: |
           echo "Applying database migrations to production..."
           echo "⚠️ Database may be temporarily unavailable during migration"
-          
+
           # Apply migrations with error handling
           if ! pnpm exec wrangler d1 migrations apply next-cf-app; then
             echo "❌ Migration failed! Checking database state..."
@@ -295,9 +297,9 @@ jobs:
             # Exit with error to stop deployment
             exit 1
           fi
-          
+
           echo "✅ Migrations completed successfully"
-          
+
           # Verify migration status
           echo "Final migration status:"
           pnpm exec wrangler d1 execute next-cf-app --command="SELECT COUNT(*) as total_migrations FROM d1_migrations;"
@@ -314,10 +316,10 @@ jobs:
       - name: Post-deployment verification
         run: |
           echo "Verifying production deployment..."
-          
+
           # Wait a moment for deployment to propagate
           sleep 10
-          
+
           # Check if the app is responding
           if curl -f https://next-cf-app.your-domain.workers.dev/api/todos; then
             echo "✅ Production deployment verified successfully"
@@ -325,13 +327,13 @@ jobs:
             echo "❌ Production deployment verification failed"
             exit 1
           fi
-          
+
           # Check database connectivity
           pnpm exec wrangler d1 execute next-cf-app --command="SELECT COUNT(*) FROM todos;" || {
             echo "⚠️ Database connectivity issue detected"
             exit 1
           }
-          
+
           echo "✅ All post-deployment checks passed"
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -341,7 +343,7 @@ jobs:
         run: |
           echo "🎉 Production deployment completed successfully!"
           echo "App URL: https://next-cf-app.your-domain.workers.dev"
-          
+
       - name: Rollback on failure
         if: failure()
         run: |

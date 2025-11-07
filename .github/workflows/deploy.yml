@@ -181,7 +181,6 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: --version
 
-
   # Cleanup job
   cleanup:
     name: Cleanup

@@ -1,5 +1,5 @@
-import TodoListPage from "@/modules/todos/todo-list.page";
+import TodoListPage from '@/modules/todos/todo-list.page';
 
 export default async function Page() {
-    return <TodoListPage />;
+	return <TodoListPage />;
 }
