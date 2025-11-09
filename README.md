@@ -1,4 +1,4 @@
-![Banner](banner.svg)
+![Logo](logo.png)
 
 # ⚡ Full-Stack Next.js + Cloudflare Template
 
