@@ -783,6 +783,5 @@ Contributions are welcome! Please feel free to submit issues and pull requests.
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
-
-© 2025 Muhammad Arifin. All rights reserved.
+## 🙏 Acknowledgements
+Created with [fullstack-next-cloudflare](https://github.com/ifindev/fullstack-next-cloudflare)
