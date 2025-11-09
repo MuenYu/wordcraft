@@ -1,6 +1,6 @@
 ![Logo](logo.png)
 
-# WordCraft - Full-Stack Next.js English learning App
+# WordCraft - Full-Stack Next.js language learning App
 
 ## 🛠️ Tech Stack
 
@@ -87,7 +87,7 @@ src/
 ### 1. Prerequisites
 
 - **Cloudflare Account** - [Sign up for free](https://dash.cloudflare.com/sign-up)
-- **Node.js 20+** and **bun** installed
+- **bun** installed
 - **Google OAuth App** - For authentication setup
 
 ### 2. Create Cloudflare API Token
