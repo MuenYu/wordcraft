@@ -12,8 +12,8 @@ declare namespace Cloudflare {
 		BETTER_AUTH_URL: string;
 		GOOGLE_CLIENT_ID: string;
 		GOOGLE_CLIENT_SECRET: string;
-		next_cf_app_bucket: R2Bucket;
-		next_cf_app: D1Database;
+		wordcraft_bucket: R2Bucket;
+		wordcraft: D1Database;
 		VECTORIZE: VectorizeIndex;
 		AI: Ai;
 		ASSETS: Fetcher;

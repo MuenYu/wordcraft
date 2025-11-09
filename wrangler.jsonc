@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "next-cf-app",
+	"name": "wordcraft",
 	"main": ".open-next/worker.js",
 	"compatibility_date": "2025-03-01",
 	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
@@ -17,23 +17,23 @@
 	},
 	"d1_databases": [
 		{
-			"binding": "next_cf_app",
-			"database_name": "next-cf-app",
+			"binding": "wordcraft",
+			"database_name": "wordcraft",
 			"database_id": "757a32d1-5779-4f09-bcf3-b268013395d4",
 			"migrations_dir": "./src/drizzle",
 		},
 	],
 	"r2_buckets": [
 		{
-			"bucket_name": "next-cf-app-bucket",
-			"binding": "next_cf_app_bucket",
-			"preview_bucket_name": "next-cf-app-dev-bucket",
+			"bucket_name": "wordcraft-bucket",
+			"binding": "wordcraft_bucket",
+			"preview_bucket_name": "wordcraft-dev-bucket",
 		},
 	],
 	"vectorize": [
 		{
 			"binding": "VECTORIZE",
-			"index_name": "next-cf-app-index",
+			"index_name": "wordcraft-index",
 		},
 	],
 	"ai": {

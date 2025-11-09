@@ -1,26 +1,6 @@
 ![Logo](logo.png)
 
-# ⚡ Full-Stack Next.js + Cloudflare Template
-
-A production-ready template for building full-stack applications with Next.js 15 and Cloudflare's powerful edge infrastructure. Perfect for MVPs with generous free tiers and seamless scaling to enterprise-level applications.
-
-**Inspired by the [Cloudflare SaaS Stack](https://github.com/supermemoryai/cloudflare-saas-stack)** - the same stack powering [Supermemory.ai](https://git.new/memory), which serves 20k+ users on just $5/month. This template modernizes that approach with Cloudflare Workers (vs Pages), includes comprehensive D1 and R2 examples, and provides a complete development workflow.
-
-You can read detail explanations and code architecture of this template from Devin AI on [Deepwiki](https://deepwiki.com/ifindev/fullstack-next-cloudflare).
-
-Don't forget to leave a star if you find this helpful ⭐️
-
-## 🌟 Why Cloudflare + Next.js?
-
-**Cloudflare's Edge Network** provides unparalleled performance and reliability:
-
-- ⚡ **Ultra-low latency** - Deploy to 300+ locations worldwide
-- 💰 **Generous free tiers** - Perfect for MVPs and side projects
-- 📈 **Effortless scaling** - From zero to millions of users automatically
-- 🔒 **Built-in security** - DDoS protection, WAF, and more
-- 🌍 **Global by default** - Your app runs close to every user
-
-Combined with **Next.js 15**, you get modern React features, Server Components, and Server Actions for optimal performance and developer experience.
+# WordCraft - Full-Stack Next.js English learning App
 
 ## 🛠️ Tech Stack
 
@@ -134,8 +114,8 @@ Create an API token for Wrangler authentication:
 
 ```bash
 # Clone the repository
-git clone https://github.com/ifindev/fullstack-next-cloudflare.git
-cd fullstack-next-cloudflare
+git clone https://github.com/MuenYu/wordcraft.git
+cd wordcraft
 
 # Install dependencies
 bun install
@@ -716,10 +696,10 @@ bun run cf:secret GOOGLE_CLIENT_SECRET
 
 ```bash
 # Monitor database performance
-wrangler d1 insights next-cf-app
+wrangler d1 insights wordcraft
 
 # View database metrics in Cloudflare Dashboard
-# Navigate to Workers & Pages → D1 → next-cf-app → Metrics
+# Navigate to Workers & Pages → D1 → wordcraft → Metrics
 ```
 
 ## 🚀 Deployment
@@ -784,4 +764,5 @@ Contributions are welcome! Please feel free to submit issues and pull requests.
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgements
+
 Created with [fullstack-next-cloudflare](https://github.com/ifindev/fullstack-next-cloudflare)
