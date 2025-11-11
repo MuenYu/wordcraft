@@ -70,5 +70,4 @@ export async function getFromR2(key: string): Promise<R2Object | null> {
 	}
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 export async function listR2Files() {}

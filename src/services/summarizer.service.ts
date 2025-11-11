@@ -29,7 +29,6 @@ export interface SummaryResult {
 }
 
 export class SummarizerService {
-	// eslint-disable-next-line no-unused-vars
 	constructor(private readonly ai: Ai) {}
 
 	async summarize(text: string, config?: SummarizerConfig): Promise<SummaryResult> {

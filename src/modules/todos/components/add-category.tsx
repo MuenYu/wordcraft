@@ -28,7 +28,6 @@ interface Category {
 }
 
 interface AddCategoryProps {
-	// eslint-disable-next-line no-unused-vars
 	onCategoryAdded: (category: Category) => void;
 }
 
