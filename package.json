@@ -3,9 +3,9 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "next dev --turbopack",
-		"build": "next build",
-		"start": "next start",
+		"dev": "bunx next dev --turbopack",
+		"build": "bunx next build",
+		"start": "bunx next start",
 		"wrangler:dev": "bunx wrangler dev",
 		"dev:cf": "bunx opennextjs-cloudflare build && bunx wrangler dev",
 		"dev:remote": "bunx opennextjs-cloudflare build && bunx wrangler dev --remote",
