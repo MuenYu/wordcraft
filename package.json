@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "bunx next dev --turbopack",
+		"dev": "bun --bun next dev",
 		"build": "bunx next build",
 		"start": "bunx next start",
 		"wrangler:dev": "bunx wrangler dev",
