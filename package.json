@@ -32,7 +32,7 @@
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
 		"precommit": "./scripts/precommit.sh",
-		"cleanup": "rm -rf .next/ dist/ node_modules/ wrangler/ && echo 'Cleanup complete.'"
+		"cleanup": "./scripts/cleanup.sh"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.2.2",
