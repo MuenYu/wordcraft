@@ -1,27 +1,12 @@
 # Agent Coding Guidelines
 
-## Code Quality & Verification
-
-- For each task completed, run: `bun precommit`
-- Ensure all linting and type-checking passes
-- Write tests for new functionality
-- Follow existing code patterns and conventions
-
-## Package Management
-
-- **Use only `bun` for all package management operations**
-- Install dependencies: `bun install`
-- Add new packages: `bun add <package-name>`
-- Add dev dependencies: `bun add -d <package-name>`
-- Update packages: `bun update`
-
 ## Project Context
 
-**WordCraft** - English Learning App
+Project Name: **WordCraft** - An Language Learning platform
 
 ### Core Features
 
-1. **Vocabulary Import**: Users import word/phrase lists with contextual sentences
+1. **Vocabulary Import**: Users import word/phrase lists with optional contextual sentences
 2. **AI Analysis**: AI analyzes context and vocabulary, outputs:
    - Word meanings and definitions
    - Part of speech identification
@@ -30,14 +15,14 @@
 4. **AI Validation**: System checks grammar and usage correctness
 5. **Flashcard System**: Contextual learning with spaced repetition
 
-### Technical Architecture
+### Technical Stack
 
 - **Framework**: Next.js with App Router
-- **Database**: PostgreSQL with Drizzle ORM
-- **Authentication**: Custom auth system
+- **Database**: Cloudflare D1 with Drizzle ORM
 - **Styling**: Tailwind CSS with shadcn/ui components
 - **Deployment**: Cloudflare Pages (configured with Wrangler)
 - **Package Manager**: Bun
+- **Runtime**: Bun (local development), Cloudflare Workers (production)
 
 ## Coding Standards
 
@@ -59,7 +44,7 @@
 
 - Use Drizzle for all database operations
 - Define schemas in `/src/db/schema.ts`
-- Use migrations in `/src/drizzle/`
+- Generate migration files with meaningful name
 - Follow established query patterns
 
 ### State Management
@@ -72,9 +57,10 @@
 ### UI/UX Guidelines
 
 - Use shadcn/ui components consistently
-- Follow responsive design patterns
+- Follow responsive design 
 - Implement proper accessibility features
 - Use consistent spacing and typography
+- TODO: Design guide is on the roadmap
 
 ## Task-Specific Guidelines
 
