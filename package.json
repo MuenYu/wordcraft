@@ -26,7 +26,7 @@
 		"db:inspect:prod": "wrangler d1 execute wordcraft --remote --command=\"SELECT name FROM sqlite_master WHERE type='table';\"",
 		"db:reset:local": "wrangler d1 execute wordcraft --local --command=\"DROP TABLE IF EXISTS todos;\" && bun run db:migrate:local",
 		"cf:secret": "bunx wrangler secret put",
-		"cf-typegen": "bun exec wrangler types && bun exec wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
+		"cf-typegen": "bunx wrangler types && bunx wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
 		"lint": "eslint . --ext .ts,.tsx,.js,.jsx",
 		"check-types": "tsc --noEmit",
 		"format": "prettier --write .",

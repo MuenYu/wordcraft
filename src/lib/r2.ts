@@ -9,7 +9,7 @@ export interface UploadResult {
 
 export async function uploadToR2(file: File, folder = 'uploads'): Promise<UploadResult> {
 	try {
-		const { env } = await getCloudflareContext();
+		const { env } = getCloudflareContext();
 
 		// Generate unique filename
 		const timestamp = Date.now();
@@ -62,7 +62,7 @@ export async function uploadToR2(file: File, folder = 'uploads'): Promise<Upload
 
 export async function getFromR2(key: string): Promise<R2Object | null> {
 	try {
-		const { env } = await getCloudflareContext();
+		const { env } = getCloudflareContext();
 		return env.wordcraft_bucket.get(key);
 	} catch (error) {
 		console.error('Error getting data from R2', error);

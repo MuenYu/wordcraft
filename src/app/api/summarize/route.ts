@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 			);
 		}
 
-		const { env } = await getCloudflareContext();
+		const { env } = getCloudflareContext();
 
 		if (!env.AI) {
 			return new Response(
