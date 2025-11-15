@@ -57,7 +57,7 @@ Project Name: **WordCraft** - An Language Learning platform
 ### UI/UX Guidelines
 
 - Use shadcn/ui components consistently
-- Follow responsive design 
+- Follow responsive design
 - Implement proper accessibility features
 - Use consistent spacing and typography
 - TODO: Design guide is on the roadmap

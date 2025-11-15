@@ -1,6 +1,6 @@
 set -euo pipefail
 
-bun run lint
+bun run lint --fix
 bun run check-types
 bun run format
 
