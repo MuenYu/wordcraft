@@ -1,3 +1,9 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	title: 'Dashboard | WordCraft',
+};
+
 export default async function DashboardPage() {
 	return (
 		<div className="container mx-auto py-8 px-4">

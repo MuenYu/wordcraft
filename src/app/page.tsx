@@ -1,6 +1,11 @@
 import { BookOpen, Globe, Brain } from 'lucide-react';
 import Image from 'next/image';
 import { Navigation } from '@/components/navigation';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	title: 'Home | WordCraft',
+};
 
 export default async function HomePage() {
 	return (
