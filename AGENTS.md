@@ -44,7 +44,8 @@ Project Name: **WordCraft** - An Language Learning platform
 
 - Use Drizzle for all database operations
 - Define schemas in `/src/db/schema.ts`
-- Generate migration files with meaningful name
+- All database changes should be apply via migrations
+- All migration files should be generated with meaningful name
 - Follow established query patterns
 
 ### State Management
