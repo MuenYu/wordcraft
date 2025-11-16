@@ -422,7 +422,7 @@ Go to your GitHub repository → Settings → Secrets and add:
 bun run db:migrate:prod
 
 # Verify production database
-bun run db:inspect:prod
+bun run db:studio:prod
 ```
 
 ## 🔧 Advanced Manual Configuration
@@ -521,13 +521,13 @@ bun run dev
 
 ### **Database Operations**
 
-| Script                     | Description                      |
-| -------------------------- | -------------------------------- |
-| `bun run db:generate`      | Generate new migration           |
-| `bun run db:migrate:local` | Apply migrations to local D1     |
-| `bun run db:migrate:prod`  | Apply migrations to production   |
-| `bun run db:studio`        | Open Drizzle Studio              |
-| `bun run db:studio:local`  | Open Drizzle Studio for local DB |
+| Script                     | Description                           |
+| -------------------------- | ------------------------------------- |
+| `bun run db:generate`      | Generate new migration                |
+| `bun run db:migrate:local` | Apply migrations to local D1          |
+| `bun run db:migrate:prod`  | Apply migrations to production        |
+| `bun run db:studio:local`  | Open Drizzle Studio for local DB      |
+| `bun run db:studio:prod`   | Open Drizzle Studio for production DB |
 
 ### **Cloudflare & Deployment**
 
