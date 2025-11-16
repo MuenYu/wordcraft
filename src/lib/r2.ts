@@ -8,6 +8,8 @@ export interface UploadResult {
 }
 
 export async function uploadToR2(file: File, folder = 'uploads'): Promise<UploadResult> {
+	// TODO: Uncomment when R2 bucket binding is enabled in wrangler.jsonc
+	/*
 	try {
 		const { env } = getCloudflareContext();
 
@@ -43,7 +45,6 @@ export async function uploadToR2(file: File, folder = 'uploads'): Promise<Upload
 		}
 
 		// Return public URL of R2 (should be using custom domain)
-
 		const publicUrl = `https://${(env as any).CLOUDFLARE_R2_URL}/${key}`;
 
 		return {
@@ -58,9 +59,18 @@ export async function uploadToR2(file: File, folder = 'uploads'): Promise<Upload
 			error: error instanceof Error ? error.message : 'Upload failed',
 		};
 	}
+	*/
+
+	// Temporary response until R2 is enabled
+	return {
+		success: false,
+		error: 'R2 storage is not available yet - feature coming soon',
+	};
 }
 
 export async function getFromR2(key: string): Promise<R2Object | null> {
+	// TODO: Uncomment when R2 bucket binding is enabled in wrangler.jsonc
+	/*
 	try {
 		const { env } = getCloudflareContext();
 		return env.wordcraft_bucket.get(key);
@@ -68,6 +78,11 @@ export async function getFromR2(key: string): Promise<R2Object | null> {
 		console.error('Error getting data from R2', error);
 		return null;
 	}
+	*/
+
+	// Temporary response until R2 is enabled
+	console.error('R2 storage is not available yet - feature coming soon');
+	return null;
 }
 
 export async function listR2Files() {}

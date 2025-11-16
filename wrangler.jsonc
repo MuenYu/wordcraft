@@ -8,6 +8,13 @@
 	"main": ".open-next/worker.js",
 	"compatibility_date": "2025-03-01",
 	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	"workers_dev": true,
+	"routes": [
+		{
+			"pattern": "wordcraft.mashiro.best",
+			"custom_domain": true,
+		},
+	],
 	"assets": {
 		"binding": "ASSETS",
 		"directory": ".open-next/assets",
@@ -19,26 +26,27 @@
 		{
 			"binding": "wordcraft",
 			"database_name": "wordcraft",
-			"database_id": "757a32d1-5779-4f09-bcf3-b268013395d4",
+			"database_id": "76a4940e-2b14-4328-acf2-a2f62934cae3",
 			"migrations_dir": "./src/drizzle",
 		},
 	],
-	"r2_buckets": [
-		{
-			"bucket_name": "wordcraft-bucket",
-			"binding": "wordcraft_bucket",
-			"preview_bucket_name": "wordcraft-dev-bucket",
-		},
-	],
-	"vectorize": [
-		{
-			"binding": "VECTORIZE",
-			"index_name": "wordcraft-index",
-		},
-	],
-	"ai": {
-		"binding": "AI",
-	},
+	// TODO: Enable these bindings when needed
+	// "r2_buckets": [
+	// 	{
+	// 		"bucket_name": "wordcraft-bucket",
+	// 		"binding": "wordcraft_bucket",
+	// 		"preview_bucket_name": "wordcraft-dev-bucket",
+	// 	},
+	// ],
+	// "vectorize": [
+	// 	{
+	// 		"binding": "VECTORIZE",
+	// 		"index_name": "wordcraft-index",
+	// 	},
+	// ],
+	// "ai": {
+	// 	"binding": "AI",
+	// },
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

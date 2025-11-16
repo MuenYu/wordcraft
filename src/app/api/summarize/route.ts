@@ -30,6 +30,8 @@ export async function POST(request: Request) {
 
 		const { env } = getCloudflareContext();
 
+		// TODO: Uncomment when AI binding is enabled in wrangler.jsonc
+		/*
 		if (!env.AI) {
 			return new Response(
 				JSON.stringify({
@@ -61,6 +63,22 @@ export async function POST(request: Request) {
 			}),
 			{
 				status: 200,
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			},
+		);
+		*/
+
+		// Temporary response until AI is enabled
+		return new Response(
+			JSON.stringify({
+				success: false,
+				error: 'AI service is not available yet - feature coming soon',
+				data: null,
+			}),
+			{
+				status: 503,
 				headers: {
 					'Content-Type': 'application/json',
 				},

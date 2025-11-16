@@ -15,8 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: 'Next.js Cloudflare App',
-	description: 'Full-stack Next.js application with Cloudflare Workers, D1 db, R2 storage, and Drizzle ORM.',
+	title: 'WordCraft',
+	description:
+		'An interactive language learning platform that helps you master vocabulary through AI-powered analysis and contextual learning.',
 };
 
 export const dynamic = 'force-dynamic';
