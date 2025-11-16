@@ -3,11 +3,10 @@ NEXTJS_ENV=development
 
 # Drizzle Kit credentials for D1
 # Get your Account ID from: https://dash.cloudflare.com/ (right sidebar)
-# Get your API Token from: https://dash.cloudflare.com/profile/api-tokens
 CLOUDFLARE_ACCOUNT_ID=your-account-id-here
-CLOUDFLARE_D1_TOKEN=your-api-token-here
 # NOTICE: we don't use R2 so far, so no set
 # CLOUDFLARE_R2_URL=your-r2-url-here
+# Get your API Token from: https://dash.cloudflare.com/profile/api-tokens
 CLOUDFLARE_API_TOKEN=your-api-token-here
 
 # Authentication
