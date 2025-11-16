@@ -500,60 +500,57 @@ bun run build:cf
 ### Daily Development
 
 ```bash
-# Terminal 1: Start Wrangler for D1 database access
-bun run wrangler:dev
-
-# Terminal 2: Start Next.js development server with HMR
+# Start Next.js development server with HMR
 bun run dev
 ```
 
-**Development URLs:**
+**Development URL:**
 
-- 🌐 **Next.js with HMR**: `http://localhost:3000` (recommended)
-- ⚙️ **Wrangler Dev Server**: `http://localhost:8787`
-
-### Alternative Development Options
-
-```bash
-# Single command - Cloudflare runtime (no HMR)
-bun run dev:cf
-
-# Test with remote Cloudflare resources
-bun run dev:remote
-```
+- 🌐 **Next.js with HMR**: `http://localhost:3000`
 
 ## 📜 Available Scripts
 
 ### **Core Development**
 
-| Script                 | Description                            |
-| ---------------------- | -------------------------------------- |
-| `bun dev`              | Start Next.js with HMR                 |
-| `bun run build:cf`     | Build for Cloudflare Workers           |
-| `bun run wrangler:dev` | Start Wrangler for local D1 access     |
-| `bun run dev:cf`       | Combined build + Cloudflare dev server |
+| Script             | Description                  |
+| ------------------ | ---------------------------- |
+| `bun dev`          | Start Next.js with HMR       |
+| `bun run build`    | Build Next.js application    |
+| `bun run build:cf` | Build for Cloudflare Workers |
+| `bun run deploy`   | Deploy to Cloudflare Workers |
 
 ### **Database Operations**
 
-| Script                                       | Description                      |
-| -------------------------------------------- | -------------------------------- |
-| `bun run db:generate`                        | Generate new migration           |
-| `bun run db:generate:named "migration_name"` | Generate named migration         |
-| `bun run db:migrate:local`                   | Apply migrations to local D1     |
-| `bun run db:migrate:preview`                 | Apply migrations to preview      |
-| `bun run db:migrate:prod`                    | Apply migrations to production   |
-| `bun run db:studio:local`                    | Open Drizzle Studio for local DB |
-| `bun run db:inspect:local`                   | List local database tables       |
-| `bun run db:reset:local`                     | Reset local database             |
+| Script                     | Description                      |
+| -------------------------- | -------------------------------- |
+| `bun run db:generate`      | Generate new migration           |
+| `bun run db:migrate:local` | Apply migrations to local D1     |
+| `bun run db:migrate:prod`  | Apply migrations to production   |
+| `bun run db:studio`        | Open Drizzle Studio              |
+| `bun run db:studio:local`  | Open Drizzle Studio for local DB |
 
-### **Deployment & Production**
+### **Cloudflare & Deployment**
 
-| Script                   | Description                          |
-| ------------------------ | ------------------------------------ |
-| `bun run deploy`         | Deploy to production                 |
-| `bun run deploy:preview` | Deploy to preview environment        |
-| `bun run cf-typegen`     | Generate Cloudflare TypeScript types |
-| `bun run cf:secret`      | Add secrets to Cloudflare Workers    |
+| Script               | Description                          |
+| -------------------- | ------------------------------------ |
+| `bun run cf:secret`  | Add secrets to Cloudflare Workers    |
+| `bun run cf-typegen` | Generate Cloudflare TypeScript types |
+
+### **Code Quality**
+
+| Script                 | Description                  |
+| ---------------------- | ---------------------------- |
+| `bun run lint`         | Run ESLint                   |
+| `bun run check-types`  | Run TypeScript type checking |
+| `bun run format`       | Format code with Prettier    |
+| `bun run format:check` | Check code formatting        |
+
+### **Utility Scripts**
+
+| Script              | Description          |
+| ------------------- | -------------------- |
+| `bun run precommit` | Run pre-commit hooks |
+| `bun run cleanup`   | Run cleanup script   |
 
 ### **Development Order**
 
@@ -565,8 +562,7 @@ bun run dev:remote
 
 **Daily development:**
 
-1. `bun run wrangler:dev` - Start D1 access (Terminal 1)
-2. `bun run dev` - Start Next.js with HMR (Terminal 2)
+1. `bun run dev` - Start Next.js with HMR
 
 **After schema changes:**
 
@@ -726,9 +722,6 @@ git push origin main
 ```bash
 # Deploy to production
 bun run deploy
-
-# Deploy to preview environment
-bun run deploy:preview
 ```
 
 ## ✍️ Todos
