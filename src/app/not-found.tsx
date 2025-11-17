@@ -12,12 +12,12 @@ export default function NotFound() {
 		<div className="flex flex-col lg:flex-row items-center justify-center min-h-screen px-4 gap-8 lg:gap-16">
 			{/* Desktop/Tablet: Mascot on left */}
 			<div className="hidden lg:block">
-				<Image src="/mascot.png" alt="WordCraft Mascot" width={400} height={400} className="w-auto h-auto max-w-lg" />
+				<Image src="/mascot.png" alt="WordCraft Mascot" width={500} height={500} />
 			</div>
 
 			{/* Mobile: Logo on top */}
 			<div className="lg:hidden">
-				<Image src="/logo.png" alt="WordCraft Logo" width={600} height={400} className="w-auto h-auto max-w-xs mb-8" />
+				<Image src="/logo.png" alt="WordCraft Logo" width={600} height={400} className="mb-8" />
 			</div>
 
 			{/* 404 content */}
