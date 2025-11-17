@@ -135,15 +135,16 @@ Edit `.dev.vars` with your credentials:
 ```bash
 # Cloudflare Configuration
 CLOUDFLARE_ACCOUNT_ID=your-account-id
-CLOUDFLARE_D1_TOKEN=your-api-token
+CLOUDFLARE_API_TOKEN=your-api-token
 
 # Authentication Secrets
 BETTER_AUTH_SECRET=your-random-secret-here
+BETTER_AUTH_URL=http://localhost:8787
 GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
 
-# Storage
-CLOUDFLARE_R2_URL=your-r2-bucket-url
+# Storage (optional - not used currently)
+# CLOUDFLARE_R2_URL=your-r2-bucket-url
 ```
 
 ### 5. Authentication Setup
@@ -330,12 +331,13 @@ openssl rand -base64 32
 ```bash
 # .dev.vars for local development
 CLOUDFLARE_ACCOUNT_ID=your-account-id
-CLOUDFLARE_D1_TOKEN=your-api-token
+CLOUDFLARE_API_TOKEN=your-api-token
 BETTER_AUTH_SECRET=your-generated-secret
+BETTER_AUTH_URL=http://localhost:8787
 GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=your-google-client-secret
 # Get this from R2 bucket settings: R2 Object Storage → Your Bucket → Settings → Public Development URL
-CLOUDFLARE_R2_URL=https://pub-a1b2c3d4e5f6g7h8i9j0.r2.dev
+# CLOUDFLARE_R2_URL=https://pub-a1b2c3d4e5f6g7h8i9j0.r2.dev
 ```
 
 **Set Production Secrets:**
@@ -387,13 +389,13 @@ INSERT INTO todos (id, title, description, completed, created_at, updated_at) VA
 
 ```bash
 # Terminal 1: Start Wrangler (provides D1 access)
-bun run wrangler:dev
+wrangler dev
 
 # Terminal 2: Start Next.js (provides HMR)
 bun run dev
 
-# Alternative: Single command (no HMR)
-bun run dev:cf
+# Alternative: Build and deploy
+bun run build:cf && bun run deploy
 ```
 
 **Verify Everything Works:**
@@ -521,13 +523,13 @@ bun run dev
 
 ### **Database Operations**
 
-| Script                     | Description                           |
-| -------------------------- | ------------------------------------- |
-| `bun run db:generate`      | Generate new migration                |
-| `bun run db:migrate:local` | Apply migrations to local D1          |
-| `bun run db:migrate:prod`  | Apply migrations to production        |
-| `bun run db:studio:local`  | Open Drizzle Studio for local DB      |
-| `bun run db:studio:prod`   | Open Drizzle Studio for production DB |
+| Script                       | Description                           |
+| ---------------------------- | ------------------------------------- |
+| `bun run db:generate <name>` | Generate new migration with name      |
+| `bun run db:migrate:local`   | Apply migrations to local D1          |
+| `bun run db:migrate:prod`    | Apply migrations to production        |
+| `bun run db:studio:local`    | Open Drizzle Studio for local DB      |
+| `bun run db:studio:prod`     | Open Drizzle Studio for production DB |
 
 ### **Cloudflare & Deployment**
 
@@ -654,7 +656,7 @@ Cloudflare Workers AI supports various models:
 ```bash
 # 1. Modify schema files in src/db/schemas/
 # 2. Generate migration
-bun run db:generate:named "add_user_table"
+bun run db:generate "add_user_table"
 # 3. Apply to local database
 bun run db:migrate:local
 # 4. Test your changes
