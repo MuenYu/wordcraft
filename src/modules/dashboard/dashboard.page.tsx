@@ -5,7 +5,7 @@ export default async function Dashboard() {
 	return (
 		<div className="container mx-auto py-12 px-4">
 			<div className="text-center mb-12">
-				<Image src="/logo.png" alt="WordCraft Logo" width={384} height={256} className="mx-auto mb-6" />
+				<Image src="/logo.png" alt="WordCraft Logo" width={540} height={270} className="mx-auto mb-10" />
 				<h1 className="text-4xl font-bold text-gray-900 mb-4">Welcome to WordCraft</h1>
 				<p className="text-xl text-gray-600 max-w-2xl mx-auto">
 					An interactive language learning platform that helps you master vocabulary through AI-powered analysis and contextual learning.

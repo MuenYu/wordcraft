@@ -17,7 +17,7 @@ export default function NotFound() {
 
 			{/* Mobile: Logo on top */}
 			<div className="lg:hidden">
-				<Image src="/logo.png" alt="WordCraft Logo" width={600} height={400} className="mb-8" />
+				<Image src="/logo.png" alt="WordCraft Logo" width={540} height={270} className="mb-8" />
 			</div>
 
 			{/* 404 content */}
