@@ -37,7 +37,7 @@ export function Navigation() {
 									Log Out <LogOut className="size-4" />
 								</Button>
 							) : (
-								<Link href="/login">
+								<Link href="/auth/login">
 									<Button variant="ghost" size="sm">
 										Log In <LogIn className="size-4" />
 									</Button>
@@ -75,7 +75,7 @@ export function Navigation() {
 													Log Out
 												</Button>
 											) : (
-												<Link href="/login">
+												<Link href="/auth/login">
 													<Button variant="ghost" className="w-full justify-start">
 														<LogIn className="mr-2 h-4 w-4" />
 														Log In

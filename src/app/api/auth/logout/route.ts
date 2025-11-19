@@ -1,4 +1,4 @@
-import { signOut } from '@/modules/auth/actions/auth.action';
+import { signOut } from '@/app/auth/actions/auth.action';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {

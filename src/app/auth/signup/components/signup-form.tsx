@@ -12,19 +12,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { type SignInSchema, signInSchema } from '@/modules/auth/models/auth.model';
-import { authClient } from '@/modules/auth/utils/auth-client';
-import dashboardRoutes from '@/modules/dashboard/dashboard.route';
-import { signIn } from '../actions/auth.action';
-import authRoutes from '../auth.route';
+import { type SignUpSchema, signUpSchema } from '@/lib/models/auth.model';
+import dashboardRoutes from '@/lib/routes/dashboard.routes';
+import { signUp } from '../../actions/auth.action';
+import authRoutes from '@/lib/routes/auth.routes';
+import { authClient } from '@/lib/auth/auth-client';
 
-export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
+export function SignupForm({ className, ...props }: React.ComponentProps<'div'>) {
 	const router = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
 
-	const form = useForm<SignInSchema>({
-		resolver: zodResolver(signInSchema),
+	const form = useForm<SignUpSchema>({
+		resolver: zodResolver(signUpSchema),
 		defaultValues: {
+			username: '',
 			email: '',
 			password: '',
 		},
@@ -37,9 +38,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 		});
 	};
 
-	async function onSubmit(values: SignInSchema) {
+	async function onSubmit(values: SignUpSchema) {
 		setIsLoading(true);
-		const { success, message } = await signIn(values);
+		const { success, message } = await signUp(values);
 
 		if (success) {
 			toast.success(message.toString());
@@ -54,8 +55,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 		<div className={cn('flex flex-col gap-6', className)} {...props}>
 			<Card>
 				<CardHeader className="text-center">
-					<CardTitle className="text-xl">Welcome to WordCraft</CardTitle>
-					<CardDescription>Master vocabulary through AI-powered learning</CardDescription>
+					<CardTitle className="text-xl">Join WordCraft</CardTitle>
+					<CardDescription>Start your vocabulary learning journey today</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<Form {...form}>
@@ -68,12 +69,25 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 											fill="currentColor"
 										/>
 									</svg>
-									Login with Google
+									Sign up with Google
 								</Button>
 								<div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
 									<span className="bg-card text-muted-foreground relative z-10 px-2">Or continue with</span>
 								</div>
 								<div className="grid gap-6">
+									<FormField
+										control={form.control}
+										name="username"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Username</FormLabel>
+												<FormControl>
+													<Input placeholder="johndoe" {...field} />
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
 									<FormField
 										control={form.control}
 										name="email"
@@ -87,24 +101,19 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 											</FormItem>
 										)}
 									/>
-									<div className="flex flex-col gap-2">
-										<FormField
-											control={form.control}
-											name="password"
-											render={({ field }) => (
-												<FormItem>
-													<FormLabel>Password</FormLabel>
-													<FormControl>
-														<Input placeholder="*********" {...field} type="password" />
-													</FormControl>
-													<FormMessage />
-												</FormItem>
-											)}
-										/>
-										<a href="#" className="ml-auto text-sm underline-offset-4 hover:underline">
-											Forgot your password?
-										</a>
-									</div>
+									<FormField
+										control={form.control}
+										name="password"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Password</FormLabel>
+												<FormControl>
+													<Input placeholder="*********" {...field} type="password" />
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
 									<Button type="submit" className="w-full" disabled={isLoading}>
 										{isLoading ? (
 											<>
@@ -112,14 +121,14 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 												Loading...
 											</>
 										) : (
-											'Login'
+											'Sign Up'
 										)}
 									</Button>
 								</div>
 								<div className="text-center text-sm">
-									Don&apos;t have an account?{' '}
-									<Link href={authRoutes.signup} className="underline underline-offset-4">
-										Sign up
+									Already have an account?{' '}
+									<Link href={authRoutes.login} className="underline underline-offset-4">
+										Sign in
 									</Link>
 								</div>
 							</div>

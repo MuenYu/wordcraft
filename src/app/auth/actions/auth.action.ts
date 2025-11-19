@@ -1,7 +1,7 @@
 'use server';
 
-import type { AuthResponse, SignInSchema, SignUpSchema } from '@/modules/auth/models/auth.model';
-import { getAuthInstance } from '@/modules/auth/utils/auth-utils';
+import type { AuthResponse, SignInSchema, SignUpSchema } from '@/lib/models/auth.model';
+import { getAuthInstance } from '@/lib/auth/auth-utils';
 
 // #region SERVER ACTIONS
 

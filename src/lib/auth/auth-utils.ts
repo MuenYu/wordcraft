@@ -4,7 +4,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { nextCookies } from 'better-auth/next-js';
 import { headers } from 'next/headers';
 import { getDb } from '@/db';
-import type { AuthUser } from '@/modules/auth/models/user.model';
+import type { AuthUser } from '@/lib/models/user.model';
 
 /**
  * Cached auth instance singleton so we don't create a new instance every time

@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/modules/auth/utils/auth-utils';
+import { getCurrentUser } from '@/lib/auth/auth-utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {

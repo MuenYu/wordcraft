@@ -1,7 +1,7 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { headers } from 'next/headers';
 import handleApiError from '@/lib/api-error';
-import { getAuthInstance } from '@/modules/auth/utils/auth-utils';
+import { getAuthInstance } from '@/lib/auth/auth-utils';
 import { SummarizerService, summarizeRequestSchema } from '@/services/summarizer.service';
 
 export async function POST(request: Request) {
