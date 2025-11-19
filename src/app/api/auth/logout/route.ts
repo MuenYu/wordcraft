@@ -1,7 +1,7 @@
 import { signOut } from '@/app/auth/actions/auth.action';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest) {
+export async function POST() {
 	try {
 		const result = await signOut();
 
