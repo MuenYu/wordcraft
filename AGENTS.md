@@ -28,10 +28,10 @@ Project Name: **WordCraft** - An Language Learning platform
 
 ### Code Organization
 
-- Follow module-based structure in `/src/modules/`
-- Separate concerns: components, actions, models, schemas, utils
+- Follow App Router structure in `/src/app/`
+- Separate concerns: components, lib, db, services
 - Use consistent naming conventions
-- Group related functionality in feature modules
+- Group related functionality logically
 
 ### React/Next.js Patterns
 

@@ -55,20 +55,6 @@ src/
 │   ├── index.ts          # DB connection
 │   └── schema.ts         # Database schemas
 ├── lib/                   # Shared utilities
-├── modules/               # Feature modules
-│   ├── auth/             # Authentication module
-│   │   ├── actions/      # Auth server actions
-│   │   ├── components/   # Auth components
-│   │   ├── hooks/        # Auth hooks
-│   │   ├── models/       # Auth models
-│   │   ├── schemas/      # Auth schemas
-│   │   └── utils/        # Auth utilities
-│   ├── dashboard/        # Dashboard module
-│   └── todos/            # Todo module
-│       ├── actions/      # Todo server actions
-│       ├── components/   # Todo components
-│       ├── models/       # Todo models
-│       └── schemas/      # Todo schemas
 ├── services/              # Business logic services
 │   └── summarizer.service.ts  # AI summarization service
 └── drizzle/              # Database migrations
@@ -76,7 +62,7 @@ src/
 
 **Key Architecture Benefits:**
 
-- **Feature Isolation** - Each module contains its own actions, components, and logic
+- **Feature Isolation** - Clear separation of concerns
 - **Server Actions** - Modern data mutations with automatic revalidation
 - **React Server Components** - Optimal performance with server-side rendering
 - **Type Safety** - End-to-end TypeScript from database to UI
