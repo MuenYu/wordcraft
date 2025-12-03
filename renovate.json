@@ -23,10 +23,8 @@
         "react",
         "react-dom",
         "@types/react",
-        "@types/react-dom"
-      ],
-      "matchPackagePatterns": [
-        "@next/*"
+        "@types/react-dom",
+        "/@next/*/"
       ],
       "separateMinorPatch": false
     },
@@ -36,10 +34,8 @@
       "matchPackageNames": [
         "typescript",
         "@types/bun",
-        "@types/node"
-      ],
-      "matchPackagePatterns": [
-        "@types/*"
+        "@types/node",
+        "/@types/*/"
       ],
       "separateMinorPatch": false
     },
@@ -74,11 +70,9 @@
         "tailwind-merge",
         "tw-animate-css",
         "clsx",
-        "class-variance-authority"
-      ],
-      "matchPackagePatterns": [
-        "radix-ui/*",
-        "lucide-react"
+        "class-variance-authority",
+        "/radix-ui/*/",
+        "/lucide-react/"
       ],
       "separateMinorPatch": false
     },
@@ -96,13 +90,15 @@
     {
       "groupName": "Security updates",
       "description": "High priority security updates",
-      "matchPackagePatterns": [
-        "*"
-      ],
       "matchCurrentVersion": "!/^0/",
-      "vulnerabilityAlerts": true,
+      "vulnerabilityAlerts": {
+        "enabled": true
+      },
       "schedule": [
         "* * * * *"
+      ],
+      "matchPackageNames": [
+        "*"
       ]
     }
   ],
@@ -121,8 +117,8 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [
-        "(^|/)drizzle\\.config\\.[jt]s$"
+      "managerFilePatterns": [
+        "/(^|/)drizzle\\.config\\.[jt]s$/"
       ],
       "matchStrings": [
         "\"schema\": \"(?<currentValue>[^\"]+)\""
