@@ -1,0 +1,33 @@
+{
+  "root": true,
+  "plugins": ["typescript", "unicorn", "import", "jest"],
+  "extends": [],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2024": true
+  },
+  "rules": {
+    "no-alert": "error",
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "no-debugger": "error",
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "no-shadow": "error",
+    "import/no-default-export": "error",
+    "import/no-unused-modules": ["error", { "unusedExports": true }],
+    "unicorn/consistent-function-scoping": "error",
+    "unicorn/switch-case-braces": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/no-unnecessary-condition": "error",
+    "jest/prefer-comparison-matcher": "error",
+    "oxc/approx-constant": "warn",
+
+    "padding-line-between-statements": [
+      "error",
+      { "blankLine": "always", "prev": "directive", "next": "*" }
+    ]
+  }
+}
