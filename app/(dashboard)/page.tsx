@@ -25,12 +25,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
-              <Image
-                src="/mascot.webp"
-                alt="WordCraft Mascot"
-                width={700}
-                height={600}
-              />
+              <Image src="/mascot.webp" alt="WordCraft Mascot" width={700} height={600} />
             </div>
           </div>
         </div>
@@ -91,23 +86,13 @@ export default function HomePage() {
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-                Ready to master vocabulary?
-              </h2>
-              <p className="mt-3 max-w-3xl text-lg text-gray-500">
-                Import lists, practice with contextual exercises, and let AI guide your learning
-                with targeted feedback and scheduled reviews.
-              </p>
-            </div>
-            <div className="mt-8 lg:mt-0 flex justify-center lg:justify-end">
-              <a href="https://github.com/nextjs/saas-starter" target="_blank">
-                <Button size="lg" variant="outline" className="text-lg rounded-full">
-                  View the code
-                  <ArrowRight className="ml-3 h-6 w-6" />
-                </Button>
-              </a>
-            </div>
+            <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+              Ready to master vocabulary?
+            </h2>
+            <p className="mt-3 max-w-3xl text-lg text-gray-500">
+              It is time! Import lists, practice with contextual exercises, and let AI guide your
+              learning with targeted feedback and scheduled reviews.
+            </p>
           </div>
         </div>
       </section>
