@@ -25,16 +25,19 @@ Project Name: **WordCraft** - A language learning platform
 ## Development Commands
 
 ### Essential Commands
+
 - `bun dev` - Start development server
 - `bun build` - Build for production
 - `bun start` - Start production server
 
 ### Database Commands
+
 - `bun db:generate` - Generate migration files
 - `bun db:migrate` - Run database migrations
 - `bun db:seed` - Seed database with default user/team
 
 ## How to Contribute
+
 - Dependencies must be managed by [renovate](renovate.json)
 - Always run `bun build` before committing to ensure build passes
 - Update [seed script](lib/db/seed.ts) after [DB schema](lib/db/schema.ts) changes to ensure all functionality is properly seeded

@@ -1,11 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:best-practices"
-  ],
-  "schedule": [
-    "* 0-5 * * 0,6"
-  ],
+  "extends": ["config:best-practices"],
+  "schedule": ["* 0-5 * * 0,6"],
   "timezone": "Australia/Sydney",
   "prConcurrentLimit": 0,
   "prHourlyLimit": 0,
@@ -14,15 +10,10 @@
   "platformAutomerge": true,
   "dependencyDashboard": false,
   "rangeStrategy": "bump",
-  "labels": [
-    "dependencies",
-    "renovate"
-  ],
+  "labels": ["dependencies", "renovate"],
   "packageRules": [
     {
-      "matchManagers": [
-        "docker-compose"
-      ],
+      "matchManagers": ["docker-compose"],
       "enabled": false
     },
     {
@@ -38,20 +29,11 @@
     },
     {
       "groupName": "TypeScript and build tools",
-      "matchPackageNames": [
-        "typescript",
-        "@types/bun",
-        "@types/node",
-        "/@types/*/"
-      ]
+      "matchPackageNames": ["typescript", "@types/bun", "@types/node", "/@types/*/"]
     },
     {
       "groupName": "Database and backend",
-      "matchPackageNames": [
-        "drizzle-orm",
-        "drizzle-kit",
-        "postgres"
-      ]
+      "matchPackageNames": ["drizzle-orm", "drizzle-kit", "postgres"]
     },
     {
       "groupName": "UI and styling",

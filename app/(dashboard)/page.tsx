@@ -14,20 +14,12 @@ export default function HomePage() {
                 <span className="block text-orange-500">Faster Than Ever</span>
               </h1>
               <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                Launch your SaaS product in record time with our powerful,
-                ready-to-use template. Packed with modern technologies and
-                essential integrations.
+                Launch your SaaS product in record time with our powerful, ready-to-use template.
+                Packed with modern technologies and essential integrations.
               </p>
               <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
-                <a
-                  href="https://vercel.com/templates/next.js/next-js-saas-starter"
-                  target="_blank"
-                >
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="text-lg rounded-full"
-                  >
+                <a href="https://vercel.com/templates/next.js/next-js-saas-starter" target="_blank">
+                  <Button size="lg" variant="outline" className="text-lg rounded-full">
                     Deploy your own
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
@@ -54,12 +46,10 @@ export default function HomePage() {
                 </svg>
               </div>
               <div className="mt-5">
-                <h2 className="text-lg font-medium text-gray-900">
-                  Next.js and React
-                </h2>
+                <h2 className="text-lg font-medium text-gray-900">Next.js and React</h2>
                 <p className="mt-2 text-base text-gray-500">
-                  Leverage the power of modern web technologies for optimal
-                  performance and developer experience.
+                  Leverage the power of modern web technologies for optimal performance and
+                  developer experience.
                 </p>
               </div>
             </div>
@@ -69,12 +59,10 @@ export default function HomePage() {
                 <Database className="h-6 w-6" />
               </div>
               <div className="mt-5">
-                <h2 className="text-lg font-medium text-gray-900">
-                  Postgres and Drizzle ORM
-                </h2>
+                <h2 className="text-lg font-medium text-gray-900">Postgres and Drizzle ORM</h2>
                 <p className="mt-2 text-base text-gray-500">
-                  Robust database solution with an intuitive ORM for efficient
-                  data management and scalability.
+                  Robust database solution with an intuitive ORM for efficient data management and
+                  scalability.
                 </p>
               </div>
             </div>
@@ -84,12 +72,10 @@ export default function HomePage() {
                 <CreditCard className="h-6 w-6" />
               </div>
               <div className="mt-5">
-                <h2 className="text-lg font-medium text-gray-900">
-                  Stripe Integration
-                </h2>
+                <h2 className="text-lg font-medium text-gray-900">Stripe Integration</h2>
                 <p className="mt-2 text-base text-gray-500">
-                  Seamless payment processing and subscription management with
-                  industry-leading Stripe integration.
+                  Seamless payment processing and subscription management with industry-leading
+                  Stripe integration.
                 </p>
               </div>
             </div>
@@ -105,18 +91,13 @@ export default function HomePage() {
                 Ready to launch your SaaS?
               </h2>
               <p className="mt-3 max-w-3xl text-lg text-gray-500">
-                Our template provides everything you need to get your SaaS up
-                and running quickly. Don't waste time on boilerplate - focus on
-                what makes your product unique.
+                Our template provides everything you need to get your SaaS up and running quickly.
+                Don't waste time on boilerplate - focus on what makes your product unique.
               </p>
             </div>
             <div className="mt-8 lg:mt-0 flex justify-center lg:justify-end">
               <a href="https://github.com/nextjs/saas-starter" target="_blank">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="text-lg rounded-full"
-                >
+                <Button size="lg" variant="outline" className="text-lg rounded-full">
                   View the code
                   <ArrowRight className="ml-3 h-6 w-6" />
                 </Button>

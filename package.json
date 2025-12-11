@@ -10,7 +10,9 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "lint": "oxlint \"**/*.{ts,tsx}\"",
-    "lint:fix": "oxlint --fix \"**/*.{ts,tsx}\""
+    "lint:fix": "oxlint --fix \"**/*.{ts,tsx}\"",
+    "format": "prettier --write \"**/*.{js,ts,tsx,json,md,css,scss,html}\"",
+    "format:check": "prettier --check \"**/*.{js,ts,tsx,json,md,css,scss,html}\""
   },
   "dependencies": {
     "@tailwindcss/postcss": "4.1.17",
@@ -41,6 +43,7 @@
     "zod": "4.1.13"
   },
   "devDependencies": {
-    "oxlint": "^0.1.0"
+    "oxlint": "^0.1.0",
+    "prettier": "^3.0.0"
   }
 }
