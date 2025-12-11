@@ -23,7 +23,7 @@ export default async function PricingPage() {
           price={basePrice?.unitAmount || 800}
           interval={basePrice?.interval || 'month'}
           trialDays={basePrice?.trialPeriodDays || 7}
-          features={['Unlimited Usage', 'Unlimited Workspace Members', 'Email Support']}
+          features={['Unlimited Vocabulary Imports', 'Multiple Learner Profiles', 'Email Support']}
           priceId={basePrice?.id}
         />
         <PricingCard
@@ -31,11 +31,7 @@ export default async function PricingPage() {
           price={plusPrice?.unitAmount || 1200}
           interval={plusPrice?.interval || 'month'}
           trialDays={plusPrice?.trialPeriodDays || 7}
-          features={[
-            'Everything in Base, and:',
-            'Early Access to New Features',
-            '24/7 Support + Slack Access',
-          ]}
+          features={['Everything in Base, and:', 'AI Prioritized Reviews', 'Priority Support']}
           priceId={plusPrice?.id}
         />
       </div>
@@ -69,7 +65,7 @@ function PricingCard({
       <ul className="space-y-4 mb-8">
         {features.map((feature, index) => (
           <li key={index} className="flex items-start">
-            <Check className="h-5 w-5 text-orange-500 mr-2 mt-0.5 flex-shrink-0" />
+            <Check className="h-5 w-5 text-pink-500 mr-2 mt-0.5 flex-shrink-0" />
             <span className="text-gray-700">{feature}</span>
           </li>
         ))}

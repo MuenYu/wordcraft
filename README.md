@@ -1,4 +1,4 @@
-![WordCraft](./banner.webp)
+![WordCraft](./public/banner.webp)
 
 ## Install Dependency
 
@@ -58,7 +58,7 @@ To test Stripe payments, use the following test card details:
 
 ## Going to Production
 
-When you're ready to deploy your SaaS application to production, follow these steps:
+When you're ready to deploy WordCraft to production, follow these steps:
 
 ### Set up a production Stripe webhook
 

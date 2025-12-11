@@ -82,7 +82,7 @@ export default function GeneralPage() {
             {state.success && <p className="text-green-500 text-sm">{state.success}</p>}
             <Button
               type="submit"
-              className="bg-orange-500 hover:bg-orange-600 text-white"
+              className="bg-pink-500 hover:bg-pink-600 text-white"
               disabled={isPending}
             >
               {isPending ? (

@@ -1,33 +1,36 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight, CreditCard, Database } from 'lucide-react';
-import { Terminal } from './terminal';
+import Image from 'next/image';
 
 export default function HomePage() {
   return (
     <main>
-      <section className="py-20">
+      <section className="pt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-12 lg:gap-8">
             <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
               <h1 className="text-4xl font-bold text-gray-900 tracking-tight sm:text-5xl md:text-6xl">
-                Build Your SaaS
-                <span className="block text-orange-500">Faster Than Ever</span>
+                WordCraft
+                <span className="block text-pink-500">Learn Words In Context</span>
               </h1>
               <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                Launch your SaaS product in record time with our powerful, ready-to-use template.
-                Packed with modern technologies and essential integrations.
+                Import vocabulary lists and let our AI analyze meanings, parts of speech, and usage.
+                Practice by creating sentences and use spaced repetition to retain what you learn.
               </p>
               <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
-                <a href="https://vercel.com/templates/next.js/next-js-saas-starter" target="_blank">
-                  <Button size="lg" variant="outline" className="text-lg rounded-full">
-                    Deploy your own
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </a>
+                <Button size="lg" variant="outline" className="text-lg rounded-full">
+                  Get started
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
               </div>
             </div>
             <div className="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
-              <Terminal />
+              <Image
+                src="/mascot.webp"
+                alt="WordCraft Mascot"
+                width={700}
+                height={600}
+              />
             </div>
           </div>
         </div>
@@ -37,7 +40,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-3 lg:gap-8">
             <div>
-              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
+              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-pink-500 text-white">
                 <svg viewBox="0 0 24 24" className="h-6 w-6">
                   <path
                     fill="currentColor"
@@ -46,36 +49,38 @@ export default function HomePage() {
                 </svg>
               </div>
               <div className="mt-5">
-                <h2 className="text-lg font-medium text-gray-900">Next.js and React</h2>
+                <h2 className="text-lg font-medium text-gray-900">AI-Powered Analysis</h2>
                 <p className="mt-2 text-base text-gray-500">
-                  Leverage the power of modern web technologies for optimal performance and
-                  developer experience.
+                  Automatically extract definitions, parts of speech, and example usages from your
+                  vocabulary lists to accelerate learning.
                 </p>
               </div>
             </div>
 
             <div className="mt-10 lg:mt-0">
-              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
+              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-pink-500 text-white">
                 <Database className="h-6 w-6" />
               </div>
               <div className="mt-5">
-                <h2 className="text-lg font-medium text-gray-900">Postgres and Drizzle ORM</h2>
+                <h2 className="text-lg font-medium text-gray-900">
+                  Vocabulary & Progress Tracking
+                </h2>
                 <p className="mt-2 text-base text-gray-500">
-                  Robust database solution with an intuitive ORM for efficient data management and
-                  scalability.
+                  Store imported vocabularies, track review progress, and power spaced-repetition
+                  flashcards to keep words in long-term memory.
                 </p>
               </div>
             </div>
 
             <div className="mt-10 lg:mt-0">
-              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
+              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-pink-500 text-white">
                 <CreditCard className="h-6 w-6" />
               </div>
               <div className="mt-5">
-                <h2 className="text-lg font-medium text-gray-900">Stripe Integration</h2>
+                <h2 className="text-lg font-medium text-gray-900">Adaptive Practice</h2>
                 <p className="mt-2 text-base text-gray-500">
-                  Seamless payment processing and subscription management with industry-leading
-                  Stripe integration.
+                  Interactive review tools validate sentence usage and adapt practice intervals
+                  using spaced repetition.
                 </p>
               </div>
             </div>
@@ -88,11 +93,11 @@ export default function HomePage() {
           <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
             <div>
               <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-                Ready to launch your SaaS?
+                Ready to master vocabulary?
               </h2>
               <p className="mt-3 max-w-3xl text-lg text-gray-500">
-                Our template provides everything you need to get your SaaS up and running quickly.
-                Don't waste time on boilerplate - focus on what makes your product unique.
+                Import lists, practice with contextual exercises, and let AI guide your learning
+                with targeted feedback and scheduled reviews.
               </p>
             </div>
             <div className="mt-8 lg:mt-0 flex justify-center lg:justify-end">
