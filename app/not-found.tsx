@@ -1,12 +1,18 @@
 import Link from 'next/link';
-import { CircleIcon } from 'lucide-react';
+import Image from 'next/image';
 
 export default function NotFound() {
   return (
-    <div className="flex items-center justify-center min-h-[100dvh]">
+    <div className="flex items-center justify-center min-h-dvh">
       <div className="max-w-md space-y-8 p-4 text-center">
         <div className="flex justify-center">
-          <CircleIcon className="size-12 text-pink-500" />
+          <Image
+            src="/logo.webp"
+            alt="WordCraft logo"
+            width={200}
+            height={100}
+            className="object-contain"
+          />
         </div>
         <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Page Not Found</h1>
         <p className="text-base text-gray-500">
