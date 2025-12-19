@@ -43,7 +43,7 @@
     "zod": "4.1.13"
   },
   "devDependencies": {
-    "oxlint": "0.18.1",
+    "oxlint": "1.33.0",
     "prettier": "3.0.0"
   }
 }
