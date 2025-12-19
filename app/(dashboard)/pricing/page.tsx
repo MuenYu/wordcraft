@@ -7,33 +7,48 @@ import { SubmitButton } from './submit-button';
 export const revalidate = 3600;
 
 export default async function PricingPage() {
-  const [prices, products] = await Promise.all([getStripePrices(), getStripeProducts()]);
+  const [stripePrices, stripeProducts] = await Promise.all([
+    getStripePrices(),
+    getStripeProducts(),
+  ]);
 
-  const basePlan = products.find((product) => product.name === 'Base');
-  const plusPlan = products.find((product) => product.name === 'Plus');
+  // merge stripe products and prices into a single list
+  const products = stripeProducts.map((product) => {
+    const price =
+      stripePrices.find((p) => p.productId === product.id) ||
+      stripePrices.find((p) => p.id === product.defaultPriceId);
 
-  const basePrice = prices.find((price) => price.productId === basePlan?.id);
-  const plusPrice = prices.find((price) => price.productId === plusPlan?.id);
+    return {
+      ...product,
+      priceId: price?.id,
+      unitAmount: price?.unitAmount ?? 1200,
+      interval: price?.interval ?? 'month',
+      trialPeriodDays: price?.trialPeriodDays ?? 7,
+    };
+  });
+
+  const paidProduct = products.find((p) => (p.unitAmount ?? 0) > 0);
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="grid md:grid-cols-2 gap-8 max-w-xl mx-auto">
         <PricingCard
-          name={basePlan?.name || 'Base'}
-          price={basePrice?.unitAmount || 800}
-          interval={basePrice?.interval || 'month'}
-          trialDays={basePrice?.trialPeriodDays || 7}
+          name={'Free'}
+          price={0}
+          interval={'Life'}
+          trialDays={'Any registed account'}
           features={['Unlimited Vocabulary Imports', 'Multiple Learner Profiles', 'Email Support']}
-          priceId={basePrice?.id}
         />
-        <PricingCard
-          name={plusPlan?.name || 'Plus'}
-          price={plusPrice?.unitAmount || 1200}
-          interval={plusPrice?.interval || 'month'}
-          trialDays={plusPrice?.trialPeriodDays || 7}
-          features={['Everything in Base, and:', 'AI Prioritized Reviews', 'Priority Support']}
-          priceId={plusPrice?.id}
-        />
+        {paidProduct && (
+          <PricingCard
+            name={paidProduct.name}
+            price={paidProduct.unitAmount}
+            interval={paidProduct.interval}
+            trialDays={paidProduct.trialPeriodDays}
+            features={['Everything in Base, and:', 'AI Prioritized Reviews', 'Priority Support']}
+            priceId={paidProduct.priceId}
+          />
+        )}
       </div>
     </main>
   );
@@ -50,17 +65,18 @@ function PricingCard({
   name: string;
   price: number;
   interval: string;
-  trialDays: number;
+  trialDays: number | string;
   features: string[];
   priceId?: string;
 }) {
   return (
     <div className="pt-6">
       <h2 className="text-2xl font-medium text-gray-900 mb-2">{name}</h2>
-      <p className="text-sm text-gray-600 mb-4">with {trialDays} day free trial</p>
+      <p className="text-sm text-gray-600 mb-4">
+        {typeof trialDays === 'number' ? `with ${trialDays} day free trial` : trialDays}
+      </p>
       <p className="text-4xl font-medium text-gray-900 mb-6">
-        ${price / 100}{' '}
-        <span className="text-xl font-normal text-gray-600">per user / {interval}</span>
+        ${price / 100} <span className="text-xl font-normal text-gray-600">/ {interval}</span>
       </p>
       <ul className="space-y-4 mb-8">
         {features.map((feature, index) => (
@@ -70,10 +86,12 @@ function PricingCard({
           </li>
         ))}
       </ul>
-      <form action={checkoutAction}>
-        <input type="hidden" name="priceId" value={priceId} />
-        <SubmitButton />
-      </form>
+      {price !== 0 && (
+        <form action={checkoutAction}>
+          <input type="hidden" name="priceId" value={priceId} />
+          <SubmitButton />
+        </form>
+      )}
     </div>
   );
 }

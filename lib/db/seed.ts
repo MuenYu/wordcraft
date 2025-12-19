@@ -6,17 +6,6 @@ import { hashPassword } from '@/lib/auth/session';
 async function createStripeProducts() {
   console.log('Creating Stripe products and prices...');
 
-  const freeProduct = await stripe.products.create({
-    name: 'Free',
-    description: 'Free plan',
-  });
-
-  await stripe.prices.create({
-    product: freeProduct.id,
-    unit_amount: 0, // $8 in cents
-    currency: 'usd',
-  });
-
   const plusProduct = await stripe.products.create({
     name: 'Plus',
     description: 'Plus subscription plan',
