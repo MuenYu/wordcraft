@@ -8,6 +8,7 @@
     "db:seed": "bunx tsx lib/db/seed.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:reset": "bun lib/db/reset.ts",
     "db:studio": "drizzle-kit studio",
     "lint": "oxlint \"**/*.{ts,tsx}\"",
     "lint:fix": "oxlint --fix \"**/*.{ts,tsx}\"",
