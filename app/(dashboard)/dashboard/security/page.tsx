@@ -22,6 +22,7 @@ type DeleteState = {
   success?: string;
 };
 
+// eslint-disable-next-line import/no-default-export
 export default function SecurityPage() {
   const [passwordState, passwordAction, isPasswordPending] = useActionState<
     PasswordState,

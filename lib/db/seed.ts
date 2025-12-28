@@ -1,10 +1,25 @@
+import * as readline from 'readline';
 import { stripe } from '../payments/stripe';
 import { db } from './drizzle';
-import { users, teams, teamMembers } from './schema';
+import { users } from './schema';
 import { hashPassword } from '@/lib/auth/session';
 
+async function confirm(question: string): Promise<boolean> {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  return new Promise((resolve) => {
+    rl.question(`${question} (y/N): `, (answer) => {
+      rl.close();
+      resolve(answer.toLowerCase() === 'y');
+    });
+  });
+}
+
 async function createStripeProducts() {
-  console.log('Creating Stripe products and prices...');
+  console.warn('Creating Stripe products and prices...');
 
   const plusProduct = await stripe.products.create({
     name: 'Plus',
@@ -13,7 +28,7 @@ async function createStripeProducts() {
 
   await stripe.prices.create({
     product: plusProduct.id,
-    unit_amount: 1200, // $12 in cents
+    unit_amount: 1200,
     currency: 'usd',
     recurring: {
       interval: 'month',
@@ -21,7 +36,7 @@ async function createStripeProducts() {
     },
   });
 
-  console.log('Stripe products and prices created successfully.');
+  console.warn('Stripe products and prices created successfully.');
 }
 
 async function seed() {
@@ -29,33 +44,20 @@ async function seed() {
   const password = 'admin123';
   const passwordHash = await hashPassword(password);
 
-  const [user] = await db
-    .insert(users)
-    .values([
-      {
-        email: email,
-        passwordHash: passwordHash,
-        role: 'owner',
-      },
-    ])
-    .returning();
-
-  console.log('Initial user created.');
-
-  const [team] = await db
-    .insert(teams)
-    .values({
-      name: 'Test Team',
-    })
-    .returning();
-
-  await db.insert(teamMembers).values({
-    teamId: team.id,
-    userId: user.id,
-    role: 'owner',
+  await db.insert(users).values({
+    email,
+    passwordHash,
   });
 
-  await createStripeProducts();
+  console.warn('Initial user created.');
+
+  const shouldCreateStripeProducts = await confirm('Do you want to create Stripe products?');
+
+  if (shouldCreateStripeProducts) {
+    await createStripeProducts();
+  } else {
+    console.warn('Skipping Stripe product creation.');
+  }
 }
 
 seed()
@@ -64,6 +66,6 @@ seed()
     process.exit(1);
   })
   .finally(() => {
-    console.log('Seed process finished. Exiting...');
+    console.warn('Seed process finished. Exiting...');
     process.exit(0);
   });

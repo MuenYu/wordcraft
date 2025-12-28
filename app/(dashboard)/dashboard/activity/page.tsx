@@ -7,8 +7,6 @@ import {
   UserCog,
   AlertCircle,
   UserMinus,
-  Mail,
-  CheckCircle,
   type LucideIcon,
 } from 'lucide-react';
 import { ActivityType } from '@/lib/db/schema';
@@ -21,10 +19,6 @@ const iconMap: Record<ActivityType, LucideIcon> = {
   [ActivityType.UPDATE_PASSWORD]: Lock,
   [ActivityType.DELETE_ACCOUNT]: UserMinus,
   [ActivityType.UPDATE_ACCOUNT]: Settings,
-  [ActivityType.CREATE_TEAM]: UserPlus,
-  [ActivityType.REMOVE_TEAM_MEMBER]: UserMinus,
-  [ActivityType.INVITE_TEAM_MEMBER]: Mail,
-  [ActivityType.ACCEPT_INVITATION]: CheckCircle,
 };
 
 function getRelativeTime(date: Date) {
@@ -40,31 +34,31 @@ function getRelativeTime(date: Date) {
 
 function formatAction(action: ActivityType): string {
   switch (action) {
-    case ActivityType.SIGN_UP:
+    case ActivityType.SIGN_UP: {
       return 'You signed up';
-    case ActivityType.SIGN_IN:
+    }
+    case ActivityType.SIGN_IN: {
       return 'You signed in';
-    case ActivityType.SIGN_OUT:
+    }
+    case ActivityType.SIGN_OUT: {
       return 'You signed out';
-    case ActivityType.UPDATE_PASSWORD:
+    }
+    case ActivityType.UPDATE_PASSWORD: {
       return 'You changed your password';
-    case ActivityType.DELETE_ACCOUNT:
+    }
+    case ActivityType.DELETE_ACCOUNT: {
       return 'You deleted your account';
-    case ActivityType.UPDATE_ACCOUNT:
+    }
+    case ActivityType.UPDATE_ACCOUNT: {
       return 'You updated your account';
-    case ActivityType.CREATE_TEAM:
-      return 'You created a new team';
-    case ActivityType.REMOVE_TEAM_MEMBER:
-      return 'You removed a team member';
-    case ActivityType.INVITE_TEAM_MEMBER:
-      return 'You invited a team member';
-    case ActivityType.ACCEPT_INVITATION:
-      return 'You accepted an invitation';
-    default:
+    }
+    default: {
       return 'Unknown action occurred';
+    }
   }
 }
 
+// eslint-disable-next-line import/no-default-export
 export default async function ActivityPage() {
   const logs = await getActivityLogs();
 

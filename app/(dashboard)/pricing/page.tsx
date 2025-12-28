@@ -3,16 +3,15 @@ import { Check } from 'lucide-react';
 import { getStripePrices, getStripeProducts } from '@/lib/payments/stripe';
 import { SubmitButton } from './submit-button';
 
-// Prices are fresh for one hour max
 export const revalidate = 3600;
 
+// eslint-disable-next-line import/no-default-export
 export default async function PricingPage() {
   const [stripePrices, stripeProducts] = await Promise.all([
     getStripePrices(),
     getStripeProducts(),
   ]);
 
-  // merge stripe products and prices into a single list
   const products = stripeProducts.map((product) => {
     const price =
       stripePrices.find((p) => p.productId === product.id) ||
@@ -36,8 +35,8 @@ export default async function PricingPage() {
           name={'Free'}
           price={0}
           interval={'Life'}
-          trialDays={'Any registed account'}
-          features={['Unlimited Vocabulary Imports', 'Multiple Learner Profiles', 'Email Support']}
+          trialDays={'Any registered account'}
+          features={['Unlimited Vocabulary Imports', 'Basic Flashcard System', 'Email Support']}
         />
         {paidProduct && (
           <PricingCard
@@ -45,7 +44,7 @@ export default async function PricingPage() {
             price={paidProduct.unitAmount}
             interval={paidProduct.interval}
             trialDays={paidProduct.trialPeriodDays}
-            features={['Everything in Base, and:', 'AI Prioritized Reviews', 'Priority Support']}
+            features={['Everything in Free, and:', 'AI Prioritized Reviews', 'Priority Support']}
             priceId={paidProduct.priceId}
           />
         )}

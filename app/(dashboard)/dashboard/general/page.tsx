@@ -62,6 +62,7 @@ function AccountFormWithData({ state }: { state: ActionState }) {
   return <AccountForm state={state} nameValue={user?.name ?? ''} emailValue={user?.email ?? ''} />;
 }
 
+// eslint-disable-next-line import/no-default-export
 export default function GeneralPage() {
   const [state, formAction, isPending] = useActionState<ActionState, FormData>(updateAccount, {});
 
