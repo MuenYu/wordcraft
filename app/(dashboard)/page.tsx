@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight, CreditCard, Database } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function HomePage() {
   return (
@@ -18,9 +19,11 @@ export default function HomePage() {
                 Practice by creating sentences and use spaced repetition to retain what you learn.
               </p>
               <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
-                <Button size="lg" variant="outline" className="text-lg rounded-full">
-                  Get started
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                <Button asChild size="lg" variant="outline" className="text-lg rounded-full">
+                  <Link href="/library">
+                    Get started
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
                 </Button>
               </div>
             </div>
