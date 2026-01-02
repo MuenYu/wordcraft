@@ -120,6 +120,69 @@ export async function signOut() {
   (await cookies()).delete('session');
 }
 
+const signInOrSignUpSchema = z.object({
+  email: z.email().min(3).max(255),
+  password: z.string().min(8).max(100),
+});
+
+export const signInOrSignUp = validatedAction(signInOrSignUpSchema, async (data, formData) => {
+  const { email, password } = data;
+
+  const foundUsers = await db.select().from(users).where(eq(users.email, email)).limit(1);
+
+  // User exists - attempt to sign in
+  if (foundUsers.length > 0) {
+    const foundUser = foundUsers[0];
+    const isPasswordValid = await comparePasswords(password, foundUser.passwordHash);
+
+    if (!isPasswordValid) {
+      return {
+        error: 'Invalid email or password. Please try again.',
+        email,
+        password,
+      };
+    }
+
+    await Promise.all([setSession(foundUser), logActivity(foundUser.id, ActivityType.SIGN_IN)]);
+
+    const redirectTo = formData.get('redirect') as string | null;
+    if (redirectTo === 'checkout') {
+      const priceId = formData.get('priceId') as string;
+      return createCheckoutSession({ user: foundUser, priceId });
+    }
+
+    redirect('/dashboard');
+  }
+
+  // User doesn't exist - create new account and sign up
+  const passwordHash = await hashPassword(password);
+
+  const newUser: NewUser = {
+    email,
+    passwordHash,
+  };
+
+  const [createdUser] = await db.insert(users).values(newUser).returning();
+
+  if (!createdUser) {
+    return {
+      error: 'Failed to create user. Please try again.',
+      email,
+      password,
+    };
+  }
+
+  await Promise.all([logActivity(createdUser.id, ActivityType.SIGN_UP), setSession(createdUser)]);
+
+  const redirectTo = formData.get('redirect') as string | null;
+  if (redirectTo === 'checkout') {
+    const priceId = formData.get('priceId') as string;
+    return createCheckoutSession({ user: createdUser, priceId });
+  }
+
+  redirect('/dashboard');
+});
+
 const updatePasswordSchema = z.object({
   currentPassword: z.string().min(8).max(100),
   newPassword: z.string().min(8).max(100),
