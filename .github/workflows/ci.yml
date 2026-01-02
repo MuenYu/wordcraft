@@ -1,4 +1,4 @@
-name: CI
+name: Code Quality Check
 
 on:
   pull_request:
@@ -25,14 +25,14 @@ jobs:
       - name: Check formatting
         run: bun run format:check
 
-      - name: Run linter
+      - name: Check lint
         run: bun run lint
 
-      - name: Build project
+      - name: Check build
         run: bun run build
         env:
-          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
-          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
-          BASE_URL: ${{ secrets.BASE_URL }}
-          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          POSTGRES_URL: PlaceHolder
+          STRIPE_SECRET_KEY: PlaceHolder
+          STRIPE_WEBHOOK_SECRET: PlaceHolder
+          BASE_URL: PlaceHolder
+          AUTH_SECRET: PlaceHolder
