@@ -1,6 +1,6 @@
 ![WordCraft](./public/banner.webp)
 
-## Install Dependency
+## Install Dependency Haha
 
 ```bash
 bun install
