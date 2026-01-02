@@ -2,7 +2,7 @@
   "formatter": [
     "auto",
     {
-      "code_action": "source.fixAll.eslint",
-    },
-  ],
+      "code_action": "source.fixAll.eslint"
+    }
+  ]
 }
