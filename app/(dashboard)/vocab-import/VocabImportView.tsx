@@ -313,7 +313,7 @@ export function VocabImportView({ user }: VocabImportViewProps) {
                       }}
                       onKeyDown={handleKeyDown}
                       placeholder="Enter the definition of this word"
-                      className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-pink-500 focus-visible:ring-pink-500 focus-visible:ring-[3px] resize-none"
+                      className="flex min-h-20 w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-pink-500 focus-visible:ring-pink-500 focus-visible:ring-[3px] resize-none"
                     />
                   </div>
                   <div className="space-y-2">
@@ -324,7 +324,7 @@ export function VocabImportView({ user }: VocabImportViewProps) {
                       onChange={(e) => setSampleSentence(e.target.value)}
                       onKeyDown={handleKeyDown}
                       placeholder="Enter an example sentence using this word"
-                      className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-pink-500 focus-visible:ring-pink-500 focus-visible:ring-[3px] resize-none"
+                      className="flex min-h-20 w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-pink-500 focus-visible:ring-pink-500 focus-visible:ring-[3px] resize-none"
                     />
                   </div>
                   {vocabError && (
