@@ -30,3 +30,9 @@ jobs:
 
       - name: Build project
         run: bun run build
+        env:
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          BASE_URL: ${{ secrets.BASE_URL }}
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
