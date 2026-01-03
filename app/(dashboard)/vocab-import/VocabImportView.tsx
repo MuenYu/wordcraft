@@ -231,9 +231,9 @@ export function VocabImportView({ user }: VocabImportViewProps) {
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="lg:flex lg:w-full gap-8">
         {/* Left Column - Input Forms */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="flex-1 space-y-6 min-w-0">
           {/* Mode Toggle */}
           <Card>
             <CardHeader>
@@ -420,13 +420,7 @@ export function VocabImportView({ user }: VocabImportViewProps) {
                       key={index}
                       className="flex items-start justify-between p-3 bg-gray-50 rounded-lg group"
                     >
-                      <div
-                        className={cn(
-                          'flex-1',
-                          mode === 'manual' &&
-                            'bg-pink-500 hover:bg-pink-600 text-white border-pink-500',
-                        )}
-                      >
+                      <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-gray-900">{item.vocab}</span>
                           <span className="text-xs px-2 py-0.5 bg-pink-100 text-pink-700 rounded-full">
@@ -447,7 +441,7 @@ export function VocabImportView({ user }: VocabImportViewProps) {
                           variant="ghost"
                           size="sm"
                           onClick={() => removeItem(index)}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity ml-2"
                         >
                           <X className="size-4" />
                         </Button>
@@ -461,7 +455,7 @@ export function VocabImportView({ user }: VocabImportViewProps) {
         </div>
 
         {/* Right Column - Summary & Submit */}
-        <div className="lg:col-span-1">
+        <div className="lg:w-80 shrink-0">
           <Card className="sticky top-8">
             <CardHeader>
               <CardTitle className="text-lg">Import Summary</CardTitle>
