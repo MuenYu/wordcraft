@@ -185,7 +185,7 @@ function LineChart({ data }: { data: { day: string; words: number }[] }) {
 // eslint-disable-next-line import/no-default-export
 export function LibraryView() {
   return (
-    <div className="flex-1 bg-gray-50">
+    <div className="flex-1">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
