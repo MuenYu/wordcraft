@@ -27,8 +27,8 @@ Project Name: **WordCraft** - A language learning platform
 ### Essential Commands
 
 - `bun dev` - Start development server
-- `bun build` - Build for production
-- `bun start` - Start production server
+- `bun run build` - Build for production
+- `bun run start` - Start production server
 
 ### Database Commands
 
@@ -40,7 +40,7 @@ Project Name: **WordCraft** - A language learning platform
 
 - `bun format` - ensure code is formatted
 - `bun lint --fix` - ensure code fixes all lint issues
-- `bun build` - ensure code can be built
+- `bun run build` - ensure code can be built
 
 ## How to Contribute
 
