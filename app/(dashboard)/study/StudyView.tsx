@@ -80,8 +80,11 @@ export function StudyView() {
   };
 
   return (
-    <section className="flex-1 p-4 lg:p-8 max-w-4xl mx-auto w-full">
-      <h1 className="text-lg lg:text-2xl font-medium mb-6">Study Session</h1>
+    <section className="flex-1 px-4 lg:px-8 py-8 max-w-4xl mx-auto w-full">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Study Session</h1>
+        <p className="mt-2 text-gray-600">Practice using words in sentences and get AI feedback</p>
+      </div>
 
       {/* Section 2.1: Metadata */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
@@ -172,7 +175,7 @@ export function StudyView() {
               onChange={(e) => setSentence(e.target.value)}
               onKeyDown={handleKeyDown}
               disabled={hasSubmitted}
-              className="min-h-[100px] py-3 text-lg resize-none focus-visible:ring-pink-500 focus-visible:border-pink-500"
+              className="min-h-25 py-3 text-lg resize-none focus-visible:ring-pink-500 focus-visible:border-pink-500"
             />
             <p className="text-xs text-muted-foreground mt-2">
               Press{' '}
@@ -186,7 +189,7 @@ export function StudyView() {
       </Card>
 
       {/* Section 2.4: AI Feedback - min-height container prevents layout shift */}
-      <div className="min-h-[300px]">
+      <div className="min-h-75">
         {feedback && (
           <Card className="mb-6">
             <CardHeader>
@@ -250,7 +253,7 @@ export function StudyView() {
                         key={index}
                         className="flex items-start gap-2 text-sm text-muted-foreground"
                       >
-                        <ArrowRight className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                        <ArrowRight className="w-4 h-4 mt-0.5 shrink-0" />
                         <span>{suggestion}</span>
                       </li>
                     ))}
@@ -262,7 +265,7 @@ export function StudyView() {
               <div className="mt-6 flex justify-end">
                 <Button
                   onClick={handleNextWord}
-                  className="inline-flex items-center gap-2 !bg-pink-500 !text-white hover:!bg-pink-600"
+                  className="inline-flex items-center gap-2 bg-pink-500! text-white! hover:bg-pink-600!"
                 >
                   Next Word
                   <ArrowRight className="w-4 h-4" />
