@@ -36,8 +36,19 @@ Project Name: **WordCraft** - A language learning platform
 - `bun db:migrate` - Run database migrations
 - `bun db:seed` - Seed database with default user/team
 
+### Before Code Commit
+
+- `bun format` - ensure code is formatted
+- `bun lint --fix` - ensure code fixes all lint issues
+- `bun build` - ensure code can be built
+
 ## How to Contribute
 
 - Dependencies must be managed by [renovate](renovate.json)
 - Always run `bun build` before committing to ensure build passes
 - Update [seed script](lib/db/seed.ts) after [DB schema](lib/db/schema.ts) changes to ensure all functionality is properly seeded
+
+### Design System
+
+- All UI implementations must align with the [Design System](ui-design/design.md)
+- Visual reference: [design.html](ui-design/design.html) (open in browser for live preview)

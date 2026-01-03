@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WordCraft Design System - Pink-Centric Style</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        /* --- CORE IDENTITY --- */
+        --accent-pink-500: #ec4899; /* The Hero Color */
+
+        /* --- REDEFINED FOUNDATION (The Pink-Centric Shift) --- */
+        /* Instead of Zinc grays, we use warm, rosy neutrals */
+
+        /* Light Mode Palette - Infused with Blush */
+        --l-bg: #ffffff;
+        --l-fg: #2d1e24; /* Warm, deep almost-black */
+        --l-primary: #1f0f16;
+        --l-secondary: #fff1f7; /* Very pale pink instead of gray */
+        --l-muted: #8a7480; /* Rosy gray text */
+        --l-border: #fce7f3; /* Pink-100 border tone */
+
+        /* Dark Mode Palette - Infused with Deep Burgundy */
+        --d-bg: #1f0f16; /* Deep burgundy-black instead of pure black */
+        --d-fg: #fff0f7; /* Pale pink-white */
+        --d-primary: #fff0f7;
+        --d-secondary: #3d2932; /* Deep rosy charcoal */
+        --d-muted: #bba3af; /* Light rosy gray */
+        --d-border: #3d2932;
+
+        /* Semantic (Unchanged, they still need to function) */
+        --sem-destructive: #ef4444;
+        --sem-chart-1: #f87171;
+        --sem-chart-2: #34d399;
+        --sem-chart-3: #60a5fa;
+        --sem-chart-4: #fbbf24;
+        --sem-chart-5: #fb923c;
+
+        /* --- DOCUMENTATION PRESENTATION VARIABLES --- */
+        /* These control the look of this design doc itself, making it feel pink-centric */
+        --doc-canvas: #fdf2f8; /* Pink-50 background */
+        --doc-card: #ffffff;
+        --doc-heading: #831843; /* Pink-900 for headings */
+        --doc-text: #1f0f16;
+        --doc-muted: #9d5c75; /* Muted rosy tone */
+        --doc-border: #fce7f3; /* Pink-100 dividers */
+      }
+
+      body {
+        margin: 0;
+        padding: 40px;
+        font-family: 'Inter', sans-serif;
+        background-color: var(--doc-canvas);
+        color: var(--doc-text);
+        background-image: radial-gradient(
+          circle at 10% 20%,
+          rgba(236, 72, 153, 0.05) 0%,
+          rgba(236, 72, 153, 0) 50%
+        );
+      }
+
+      .figma-canvas {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: var(--doc-card);
+        padding: 60px;
+        border-radius: 24px;
+        /* A soft pink glow shadow */
+        box-shadow:
+          0 20px 40px -20px rgba(236, 72, 153, 0.25),
+          0 0 0 1px rgba(236, 72, 153, 0.05);
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        color: var(--doc-heading);
+      }
+
+      h1 {
+        font-weight: 900;
+        font-size: 3rem;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.5rem;
+      }
+
+      h2 {
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin-top: 4rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--doc-border);
+      }
+
+      h3 {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+      }
+
+      .subtitle {
+        color: var(--doc-muted);
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        font-weight: 500;
+      }
+
+      .section-intro {
+        color: var(--doc-muted);
+        margin-bottom: 2rem;
+        max-width: 700px;
+        line-height: 1.6;
+      }
+
+      /* Grid Systems */
+      .two-col-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+      }
+
+      .swatch-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 24px;
+      }
+
+      /* Color Swatch Component */
+      .color-swatch {
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid var(--doc-border);
+        box-shadow: 0 4px 12px rgba(236, 72, 153, 0.08);
+        transition: transform 0.2s ease;
+      }
+      .color-swatch:hover {
+        transform: translateY(-2px);
+      }
+
+      .swatch-color-area {
+        height: 120px;
+        width: 100%;
+      }
+
+      .swatch-info {
+        padding: 16px;
+        background: white;
+      }
+
+      .color-name {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .color-hex {
+        font-family: monospace;
+        color: var(--doc-muted);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+      }
+
+      /* Accent Usage Section */
+      .accent-showcase {
+        display: flex;
+        gap: 40px;
+        align-items: flex-start;
+      }
+
+      .hero-example-box {
+        background: var(--l-bg); /* Uses the new warmer white */
+        padding: 40px;
+        border-radius: 16px;
+        border: 1px solid var(--l-border); /* Uses the new blush border */
+        flex-grow: 1;
+        box-shadow: 0 4px 20px rgba(236, 72, 153, 0.1);
+      }
+
+      .hero-headline {
+        font-weight: 900;
+        font-size: 2.5rem;
+        color: var(--l-fg);
+        line-height: 1.2;
+      }
+
+      .highlight-pink {
+        color: var(--accent-pink-500);
+        /* Adding a subtle text shadow to make it pop more */
+        text-shadow: 0 2px 10px rgba(236, 72, 153, 0.3);
+      }
+
+      /* Neutral Foundation Modes */
+      .mode-container {
+        padding: 32px;
+        border-radius: 20px;
+      }
+
+      .mode-light {
+        /* Warmer background for the light mode container */
+        background-color: #fff9fc;
+        border: 1px solid var(--doc-border);
+      }
+
+      .mode-dark {
+        /* Deep burgundy background for dark mode container */
+        background-color: var(--d-bg);
+        color: var(--d-fg);
+        border: 1px solid var(--d-border);
+      }
+
+      .mode-dark h3 {
+        color: var(--d-fg);
+      }
+
+      .mini-swatch-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .mini-swatch {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 8px;
+        border-radius: 12px;
+      }
+
+      .mode-light .mini-swatch {
+        background: white;
+        border: 1px solid var(--l-border);
+      }
+      .mode-dark .mini-swatch {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(236, 72, 153, 0.1);
+      }
+
+      .color-chip {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      .mode-dark .color-chip {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .token-info {
+        display: flex;
+        flex-direction: column;
+      }
+      .token-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+      .mode-dark .token-name {
+        font-weight: 500;
+        color: var(--d-fg);
+      }
+      .token-hex {
+        font-family: monospace;
+        font-size: 0.8rem;
+        opacity: 0.8;
+        color: var(--doc-muted);
+      }
+      .mode-dark .token-hex {
+        color: var(--d-muted);
+      }
+
+      /* UI Components Section */
+      .ui-kit-row {
+        display: flex;
+        gap: 32px;
+        flex-wrap: wrap;
+        margin-top: 32px;
+        align-items: flex-start;
+      }
+
+      /* Feature Icon Example */
+      .feature-card {
+        background: var(--l-bg);
+        border: 1px solid var(--l-border);
+        padding: 24px;
+        border-radius: 16px;
+        width: 240px;
+        /* Warmer shadow */
+        box-shadow: 0 10px 30px -10px rgba(236, 72, 153, 0.15);
+      }
+      .icon-box-pink {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, var(--accent-pink-500), #be185d);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+        color: white;
+        box-shadow: 0 8px 20px -6px rgba(236, 72, 153, 0.5);
+      }
+
+      /* Buttons */
+      .btn {
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-primary {
+        background: var(--accent-pink-500);
+        color: white;
+        box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+      }
+      .btn-primary:hover {
+        box-shadow: 0 6px 16px rgba(236, 72, 153, 0.5);
+        transform: translateY(-1px);
+      }
+
+      /* Secondary button is now pale pink instead of gray */
+      .btn-secondary {
+        background: var(--l-secondary);
+        color: var(--accent-pink-500);
+        border: 1px solid var(--l-border);
+      }
+      .btn-secondary:hover {
+        background: #ffe4f0;
+      }
+
+      .btn-destructive {
+        background: var(--sem-destructive);
+        color: white;
+      }
+
+      /* Tags updated to be pink-centric */
+      .design-tags {
+        display: flex;
+        gap: 12px;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+      }
+      .tag {
+        /* Pale pink background, darker pink text */
+        background: #fce7f3;
+        padding: 8px 16px;
+        border-radius: 24px;
+        font-size: 0.9rem;
+        color: #be185d; /* Pink-700 */
+        font-weight: 600;
+        border: 1px solid #fbcfe8;
+      }
+
+      .comp-label {
+        color: var(--doc-muted);
+        margin-bottom: 12px;
+        display: block;
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="figma-canvas">
+      <header>
+        <h1>WordCraft</h1>
+        <p class="subtitle">Color Style Guide: Pink-Centric Evolution</p>
+        <div class="design-tags">
+          <span class="tag">✨ Energetic & Playful</span>
+          <span class="tag">💖 Warm Foundation</span>
+          <span class="tag">🎯 High-Impact Accent</span>
+          <span class="tag">🌸 Modern Rosy Aesthetic</span>
+        </div>
+      </header>
+
+      <section>
+        <h2>🎨 Primary Accent Color</h2>
+        <p class="section-intro">
+          The signature Hot Pink remains the star of the show. In this evolved style, it doesn't
+          just contrast; it defines the entire atmosphere, driving engagement and energy.
+        </p>
+
+        <div class="accent-showcase">
+          <div class="color-swatch" style="width: 240px">
+            <div class="swatch-color-area" style="background-color: var(--accent-pink-500)"></div>
+            <div class="swatch-info">
+              <span class="color-name" style="color: var(--accent-pink-500); font-size: 1.1rem"
+                >Hot Pink (Pink-500)</span
+              >
+              <span class="color-hex">#ec4899</span>
+            </div>
+          </div>
+
+          <div class="hero-example-box">
+            <span class="comp-label">Hero Headline Usage Example</span>
+            <div class="hero-headline">
+              The smart way to<br />
+              <span class="highlight-pink">Learn Words In Context</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>1️⃣ Core Color Philosophy: Warm Rosy Foundation</h2>
+        <p class="section-intro">
+          We have shifted away from sterile Zinc grays. The new foundation is infused with warm pink
+          undertones in light mode, and deep burgundy tones in dark mode, creating a cohesive,
+          inviting environment that complements the primary accent.
+        </p>
+
+        <div class="two-col-grid">
+          <div class="mode-container mode-light">
+            <h3>Warm Light Mode</h3>
+            <div class="mini-swatch-list">
+              <div class="mini-swatch">
+                <div class="color-chip" style="background: var(--l-bg)"></div>
+                <div class="token-info">
+                  <span class="token-name">Background</span
+                  ><span class="token-hex">#ffffff (Pure White)</span>
+                </div>
+              </div>
+              <div class="mini-swatch">
+                <div class="color-chip" style="background: var(--l-fg)"></div>
+                <div class="token-info">
+                  <span class="token-name">Foreground</span
+                  ><span class="token-hex">#2d1e24 (Warm Black)</span>
+                </div>
+              </div>
+              <div class="mini-swatch">
+                <div class="color-chip" style="background: var(--l-secondary)"></div>
+                <div class="token-info">
+                  <span class="token-name">Secondary BG</span
+                  ><span class="token-hex">#fff1f7 (Pale Blush)</span>
+                </div>
+              </div>
+              <div class="mini-swatch">
+                <div class="color-chip" style="background: var(--l-muted)"></div>
+                <div class="token-info">
+                  <span class="token-name">Muted Text</span
+                  ><span class="token-hex">#8a7480 (Rosy Gray)</span>
+                </div>
+              </div>
+              <div class="mini-swatch">
+                <div class="color-chip" style="background: var(--l-border)"></div>
+                <div class="token-info">
+                  <span class="token-name">Borders</span
+                  ><span class="token-hex">#fce7f3 (Pink Tint)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mode-container mode-dark">
+            <h3>Deep Rosy Dark Mode</h3>
+            <div class="mini-swatch-list">
+              <div class="mini-swatch">
+                <div class="color-chip" style="background: var(--d-bg)"></div>
+                <div class="token-info">
+                  <span class="token-name">Background</span
+                  ><span class="token-hex">#1f0f16 (Deep Burgundy)</span>
+                </div>
+              </div>
+              <div class="mini-swatch">
+                <div class="color-chip" style="background: var(--d-fg)"></div>
+                <div class="token-info">
+                  <span class="token-name">Foreground</span
+                  ><span class="token-hex">#fff0f7 (Pale Pink White)</span>
+                </div>
+              </div>
+              <div class="mini-swatch">
+                <div class="color-chip" style="background: var(--d-secondary)"></div>
+                <div class="token-info">
+                  <span class="token-name">Secondary BG</span
+                  ><span class="token-hex">#3d2932 (Deep Rose Charcoal)</span>
+                </div>
+              </div>
+              <div class="mini-swatch">
+                <div class="color-chip" style="background: var(--d-muted)"></div>
+                <div class="token-info">
+                  <span class="token-name">Muted Text</span
+                  ><span class="token-hex">#bba3af (Light Rosy Gray)</span>
+                </div>
+              </div>
+              <div class="mini-swatch">
+                <div class="color-chip" style="background: var(--d-border)"></div>
+                <div class="token-info">
+                  <span class="token-name">Borders</span
+                  ><span class="token-hex">#3d2932 (Dark Rose)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>2️⃣ Semantic Colors</h2>
+        <p class="section-intro">
+          Functional colors remain distinct but are presented within the warmer environment.
+        </p>
+
+        <h3 style="color: var(--sem-destructive)">Destructive / Error</h3>
+        <div
+          class="color-swatch"
+          style="width: 220px; margin-bottom: 32px; border-color: rgba(239, 68, 68, 0.3)"
+        >
+          <div class="swatch-color-area" style="background-color: var(--sem-destructive)"></div>
+          <div class="swatch-info">
+            <span class="color-name" style="color: var(--sem-destructive)">Error Red</span>
+            <span class="color-hex">#ef4444</span>
+          </div>
+        </div>
+
+        <h3>Chart & Data Visualization</h3>
+        <div class="swatch-grid">
+          <div class="color-swatch">
+            <div class="swatch-color-area" style="background-color: var(--sem-chart-1)"></div>
+            <div class="swatch-info"><span class="color-name">Coral</span></div>
+          </div>
+          <div class="color-swatch">
+            <div class="swatch-color-area" style="background-color: var(--sem-chart-2)"></div>
+            <div class="swatch-info"><span class="color-name">Emerald</span></div>
+          </div>
+          <div class="color-swatch">
+            <div class="swatch-color-area" style="background-color: var(--sem-chart-3)"></div>
+            <div class="swatch-info"><span class="color-name">Navy Blue</span></div>
+          </div>
+          <div class="color-swatch">
+            <div class="swatch-color-area" style="background-color: var(--sem-chart-4)"></div>
+            <div class="swatch-info"><span class="color-name">Yellow</span></div>
+          </div>
+          <div class="color-swatch">
+            <div class="swatch-color-area" style="background-color: var(--sem-chart-5)"></div>
+            <div class="swatch-info"><span class="color-name">Orange</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>📐 Applied UI Examples (Warm Light Mode)</h2>
+        <p class="section-intro">
+          How the accent and new rosy foundation interact. Notice the secondary elements are now
+          pale pink instead of gray.
+        </p>
+
+        <div class="ui-kit-row">
+          <div>
+            <span class="comp-label">Feature Card</span>
+            <div class="feature-card">
+              <div class="icon-box-pink">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                </svg>
+              </div>
+              <h4 style="margin: 0 0 8px 0; color: var(--l-fg); font-size: 1.1rem">
+                Adaptive Practice
+              </h4>
+              <p style="margin: 0; color: var(--l-muted); line-height: 1.5">
+                AI-powered analysis of your vocabulary progress.
+              </p>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 20px">
+            <span class="comp-label">Button States</span>
+            <button class="btn btn-primary">Primary CTA (Hot Pink)</button>
+            <button class="btn btn-secondary">Secondary Action (Blush)</button>
+            <button class="btn btn-destructive" style="opacity: 0.9">Delete Account</button>
+          </div>
+
+          <div>
+            <span class="comp-label">Form Input (Active State)</span>
+            <div
+              style="
+                background: var(--l-bg);
+                border: 2px solid var(--accent-pink-500);
+                padding: 12px 16px;
+                border-radius: 10px;
+                width: 240px;
+                color: var(--l-fg);
+                box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2);
+              "
+            >
+              <span style="color: var(--l-fg)">I am learning...|</span>
+            </div>
+            <span class="comp-label" style="margin-top: 20px">Inactive State</span>
+            <div
+              style="
+                background: var(--l-bg);
+                border: 1px solid var(--l-border);
+                padding: 12px 16px;
+                border-radius: 10px;
+                width: 240px;
+                color: var(--l-muted);
+              "
+            >
+              Enter vocabulary word...
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
