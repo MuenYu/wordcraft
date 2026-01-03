@@ -182,35 +182,6 @@ function LineChart({ data }: { data: { day: string; words: number }[] }) {
   );
 }
 
-function StatCard({
-  icon: Icon,
-  label,
-  value,
-  color,
-}: {
-  icon: typeof BookOpen;
-  label: string;
-  value: string;
-  color: string;
-}) {
-  return (
-    <Card>
-      <CardContent className="flex items-center gap-4 p-6">
-        <div
-          className="flex h-12 w-12 items-center justify-center rounded-full"
-          style={{ backgroundColor: `${color}20` }}
-        >
-          <Icon className="h-6 w-6" style={{ color }} />
-        </div>
-        <div>
-          <p className="text-sm text-gray-500">{label}</p>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
 // eslint-disable-next-line import/no-default-export
 export function LibraryView() {
   return (
@@ -220,14 +191,6 @@ export function LibraryView() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Your Library</h1>
           <p className="mt-2 text-gray-600">Track your vocabulary learning progress</p>
-        </div>
-
-        {/* Stats overview */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <StatCard icon={CheckCircle} label="Deep Matured" value="45" color="#22c55e" />
-          <StatCard icon={TrendingUp} label="Matured" value="120" color="#3b82f6" />
-          <StatCard icon={Clock} label="Memorizing" value="85" color="#f59e0b" />
-          <StatCard icon={BookOpen} label="Pending" value="50" color="#94a3b8" />
         </div>
 
         {/* Charts */}
