@@ -14,6 +14,7 @@ import {
   ArrowRight,
   Eye,
   EyeOff,
+  RotateCcw,
 } from 'lucide-react';
 
 // Mock data for the study session
@@ -77,6 +78,12 @@ export function StudyView() {
     setHasSubmitted(false);
     setFeedback(null);
     setStudyCount((prev) => prev + 1);
+  };
+
+  const handleRetry = () => {
+    setSentence('');
+    setHasSubmitted(false);
+    setFeedback(null);
   };
 
   return (
@@ -262,7 +269,15 @@ export function StudyView() {
               )}
 
               {/* Next button */}
-              <div className="mt-6 flex justify-end">
+              <div className="mt-6 flex justify-end gap-3">
+                <Button
+                  variant="outline"
+                  onClick={handleRetry}
+                  className="inline-flex items-center gap-2"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  Retry
+                </Button>
                 <Button
                   onClick={handleNextWord}
                   className="inline-flex items-center gap-2 bg-pink-500! text-white! hover:bg-pink-600!"
