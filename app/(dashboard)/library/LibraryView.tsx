@@ -1,7 +1,9 @@
 'use client';
 
+import { useState } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, TrendingUp, Clock, CheckCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 // Mock data for the donut chart - word learning status
 const wordStatusData = [
@@ -11,15 +13,23 @@ const wordStatusData = [
   { label: 'Pending', value: 50, color: '#94a3b8' }, // gray
 ];
 
-// Mock data for the line chart - daily word memorization (last 7 days)
-const dailyActivityData = [
-  { day: 'Mon', words: 12 },
-  { day: 'Tue', words: 19 },
-  { day: 'Wed', words: 8 },
-  { day: 'Thu', words: 25 },
-  { day: 'Fri', words: 15 },
-  { day: 'Sat', words: 32 },
-  { day: 'Sun', words: 21 },
+// Mock data for stubborn words - words studied many times but low mastery
+const stubbornWordsData = [
+  { word: 'serendipity', partOfSpeech: 'noun', studyCount: 23, masteryLevel: 28 },
+  { word: 'ubiquitous', partOfSpeech: 'adj', studyCount: 31, masteryLevel: 22 },
+  { word: 'paradigm', partOfSpeech: 'noun', studyCount: 18, masteryLevel: 35 },
+  { word: 'ameliorate', partOfSpeech: 'verb', studyCount: 27, masteryLevel: 24 },
+  { word: 'ephemeral', partOfSpeech: 'adj', studyCount: 21, masteryLevel: 32 },
+  { word: 'obfuscate', partOfSpeech: 'verb', studyCount: 19, masteryLevel: 29 },
+  { word: 'pernicious', partOfSpeech: 'adj', studyCount: 25, masteryLevel: 26 },
+  { word: 'quintessential', partOfSpeech: 'noun', studyCount: 22, masteryLevel: 31 },
+  { word: 'ameliorate', partOfSpeech: 'verb', studyCount: 28, masteryLevel: 23 },
+  { word: 'loquacious', partOfSpeech: 'adj', studyCount: 20, masteryLevel: 33 },
+  { word: 'obsequious', partOfSpeech: 'adj', studyCount: 24, masteryLevel: 27 },
+  { word: 'pragmatic', partOfSpeech: 'adj', studyCount: 26, masteryLevel: 30 },
+  { word: 'resilient', partOfSpeech: 'adj', studyCount: 29, masteryLevel: 25 },
+  { word: 'sarcastic', partOfSpeech: 'adj', studyCount: 17, masteryLevel: 38 },
+  { word: 'tenacious', partOfSpeech: 'adj', studyCount: 30, masteryLevel: 21 },
 ];
 
 function DonutChart({
@@ -71,119 +81,23 @@ function DonutChart({
   );
 }
 
-function LineChart({ data }: { data: { day: string; words: number }[] }) {
-  const maxWords = Math.max(...data.map((d) => d.words));
-  const padding = 20;
-  const width = 280;
-  const height = 120;
-  const graphWidth = width - padding * 2;
-  const graphHeight = height - padding * 2;
-
-  const points = data
-    .map((item, index) => {
-      const x = padding + (index / (data.length - 1)) * graphWidth;
-      const y = padding + graphHeight - (item.words / maxWords) * graphHeight;
-      return `${x},${y}`;
-    })
-    .join(' ');
-
-  return (
-    <div className="w-full">
-      <svg
-        width="100%"
-        height="150"
-        viewBox={`0 0 ${width} ${height}`}
-        className="overflow-visible"
-      >
-        {/* Grid lines */}
-        {[0, 1, 2, 3, 4].map((i) => (
-          <line
-            key={i}
-            x1={padding}
-            y1={padding + (i / 4) * graphHeight}
-            x2={width - padding}
-            y2={padding + (i / 4) * graphHeight}
-            stroke="#e5e7eb"
-            strokeWidth="1"
-          />
-        ))}
-
-        {/* Y-axis labels */}
-        {[
-          { value: maxWords, y: padding },
-          { value: Math.round(maxWords * 0.5), y: padding + graphHeight / 2 },
-          { value: 0, y: padding + graphHeight },
-        ].map((label, i) => (
-          <text
-            key={i}
-            x={padding - 8}
-            y={label.y + 4}
-            textAnchor="end"
-            className="text-xs fill-gray-500"
-          >
-            {label.value}
-          </text>
-        ))}
-
-        {/* Line */}
-        <polyline
-          fill="none"
-          stroke="#ec4899"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          points={points}
-        />
-
-        {/* Data points */}
-        {data.map((item, index) => {
-          const x = padding + (index / (data.length - 1)) * graphWidth;
-          const y = padding + graphHeight - (item.words / maxWords) * graphHeight;
-          return (
-            <g key={index}>
-              <circle
-                cx={x}
-                cy={y}
-                r="6"
-                fill="white"
-                stroke="#ec4899"
-                strokeWidth="3"
-                className="cursor-pointer transition-all hover:r-8"
-              />
-              <text
-                x={x}
-                y={y - 12}
-                textAnchor="middle"
-                className="text-xs font-medium fill-gray-700"
-              >
-                {item.words}
-              </text>
-            </g>
-          );
-        })}
-
-        {/* X-axis labels */}
-        {data.map((item, index) => {
-          const x = padding + (index / (data.length - 1)) * graphWidth;
-          return (
-            <text
-              key={index}
-              x={x}
-              y={height - 2}
-              textAnchor="middle"
-              className="text-xs fill-gray-500"
-            >
-              {item.day}
-            </text>
-          );
-        })}
-      </svg>
-    </div>
-  );
-}
-
 // eslint-disable-next-line import/no-default-export
 export function LibraryView() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const totalPages = Math.ceil(stubbornWordsData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentItems = stubbornWordsData.slice(startIndex, startIndex + itemsPerPage);
+
+  const goToPreviousPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  const goToNextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
+
   return (
     <div className="flex-1">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -221,16 +135,66 @@ export function LibraryView() {
             </CardContent>
           </Card>
 
-          {/* Line Chart - Daily Activity */}
+          {/* Stubborn Words */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Words Memorized (Last 7 Days)</CardTitle>
+              <CardTitle className="text-lg">Stubborn Words</CardTitle>
             </CardHeader>
             <CardContent>
-              <LineChart data={dailyActivityData} />
-              <div className="mt-4 flex items-center justify-center gap-2">
-                <div className="h-3 w-3 rounded-full bg-pink-500" />
-                <span className="text-sm text-gray-600">Words learned per day</span>
+              <div className="space-y-3">
+                {currentItems.map((item, index) => (
+                  <div key={item.word} className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-gray-400 w-4">
+                      {startIndex + index + 1}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-gray-900 truncate">{item.word}</span>
+                        <span className="text-xs px-2 py-0.5 bg-pink-100 text-pink-700 rounded-full shrink-0">
+                          {item.partOfSpeech}
+                        </span>
+                      </div>
+                      <div className="mt-1 flex items-center gap-2">
+                        <span className="text-xs text-gray-500">{item.studyCount} studies</span>
+                        <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden ml-2">
+                          <div
+                            className="h-full bg-amber-500 rounded-full transition-all"
+                            style={{ width: `${item.masteryLevel}%` }}
+                          />
+                        </div>
+                        <span className="text-xs font-medium text-amber-600 w-8 text-right">
+                          {item.masteryLevel}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4 flex items-center justify-between border-t pt-4">
+                <span className="text-xs text-gray-500">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={goToPreviousPage}
+                    disabled={currentPage === 1}
+                    className="h-7 w-7"
+                  >
+                    <ChevronLeft className="h-3 w-3" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                    className="h-7 w-7"
+                  >
+                    <ChevronRight className="h-3 w-3" />
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
