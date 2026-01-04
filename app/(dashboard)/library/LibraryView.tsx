@@ -13,6 +13,23 @@ const wordStatusData = [
   { label: 'Pending', value: 50, color: '#94a3b8' }, // gray
 ];
 
+// Mock data for daily study counts (last 30 days)
+function generateDailyStudyData() {
+  const data = [];
+  for (let i = 29; i >= 0; i--) {
+    data.push({
+      label: i === 0 ? 'Today' : `-${i}`,
+      count: Math.floor(Math.random() * 50) + 10, // Random count between 10-60
+    });
+  }
+  return data;
+}
+
+const dailyStudyData = generateDailyStudyData();
+const averageStudyCount = Math.round(
+  dailyStudyData.reduce((acc, item) => acc + item.count, 0) / dailyStudyData.length,
+);
+
 // Mock data for stubborn words - words studied many times but low mastery
 const stubbornWordsData = [
   { word: 'serendipity', partOfSpeech: 'noun', studyCount: 23, masteryLevel: 28 },
@@ -31,6 +48,118 @@ const stubbornWordsData = [
   { word: 'sarcastic', partOfSpeech: 'adj', studyCount: 17, masteryLevel: 38 },
   { word: 'tenacious', partOfSpeech: 'adj', studyCount: 30, masteryLevel: 21 },
 ];
+
+function LineChart({
+  data,
+  averageLine,
+}: {
+  data: { label: string; count: number }[];
+  averageLine: number;
+}) {
+  const maxCount = Math.max(...data.map((d) => d.count), averageLine);
+  const width = 500;
+  const height = 200;
+  const padding = 40;
+  const chartWidth = width - padding * 2;
+  const chartHeight = height - padding * 2;
+  const barWidth = chartWidth / data.length - 4;
+
+  const averageY = height - padding - (averageLine / maxCount) * chartHeight;
+
+  return (
+    <div className="relative">
+      <svg
+        width="100%"
+        height="100%"
+        viewBox={`0 0 ${width} ${height}`}
+        className="overflow-visible"
+      >
+        {/* Y-axis grid lines */}
+        {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
+          const y = height - padding - ratio * chartHeight;
+          const value = Math.round(maxCount * ratio);
+          return (
+            <g key={ratio}>
+              <line
+                x1={padding}
+                y1={y}
+                x2={width - padding}
+                y2={y}
+                stroke="#e5e7eb"
+                strokeWidth="1"
+                strokeDasharray="4,4"
+              />
+              <text x={padding - 8} y={y + 4} textAnchor="end" className="text-xs fill-gray-500">
+                {value}
+              </text>
+            </g>
+          );
+        })}
+
+        {/* Average line */}
+        <line
+          x1={padding}
+          y1={averageY}
+          x2={width - padding}
+          y2={averageY}
+          stroke="#9ca3af"
+          strokeWidth="2"
+          strokeDasharray="6,4"
+        />
+        <text
+          x={width - padding + 8}
+          y={averageY + 4}
+          className="text-xs fill-gray-500 font-medium"
+        >
+          Avg: {averageLine}
+        </text>
+
+        {/* Bars */}
+        {data.map((item, index) => {
+          const x = padding + index * (chartWidth / data.length) + 2;
+          const barHeight = (item.count / maxCount) * chartHeight;
+          const y = height - padding - barHeight;
+          return (
+            <g key={index}>
+              <rect
+                x={x}
+                y={y}
+                width={barWidth}
+                height={barHeight}
+                rx="3"
+                fill="#ec4899"
+                className="cursor-pointer hover:opacity-80 transition-opacity"
+              />
+              {/* Tooltip on hover */}
+              <title>
+                {item.label}: {item.count} words
+              </title>
+            </g>
+          );
+        })}
+
+        {/* X-axis labels */}
+        {data
+          .filter((_, index) => index % 5 === 0)
+          .map((item, index) => {
+            const originalIndex = index * 5;
+            const x = padding + originalIndex * (chartWidth / data.length) + barWidth / 2 + 2;
+            return (
+              <text
+                key={originalIndex}
+                x={x}
+                y={height - 10}
+                textAnchor="middle"
+                className="text-xs fill-gray-500"
+              >
+                {item.label}
+              </text>
+            );
+          })}
+      </svg>
+    </div>
+  );
+}
 
 function DonutChart({
   data,
@@ -199,6 +328,16 @@ export function LibraryView() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Line Chart - Daily Study Activity */}
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle className="text-lg">Study Activity</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <LineChart data={dailyStudyData} averageLine={averageStudyCount} />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
