@@ -6,6 +6,8 @@
 bun install
 ```
 
+> **Note**: All dependencies are automatically managed by [Renovate](https://github.com/renovatebot/renovate). Pull requests for dependency updates will be created automatically.
+
 ## Running Locally
 
 [Install](https://docs.stripe.com/stripe-cli) and log in to your Stripe account:
