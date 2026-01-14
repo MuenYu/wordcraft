@@ -27,13 +27,14 @@ export async function proxy(request: NextRequest) {
           expires: expiresInOneDay.toISOString(),
         }),
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
+        path: '/',
         expires: expiresInOneDay,
       });
     } catch (error) {
       console.error('Error updating session:', error);
-      res.cookies.delete('session');
+      res.cookies.delete({ name: 'session', path: '/' });
       if (isProtectedRoute) {
         return NextResponse.redirect(new URL('/sign-in', request.url));
       }

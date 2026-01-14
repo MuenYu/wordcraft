@@ -117,7 +117,7 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
 export async function signOut() {
   const user = (await getUser()) as User;
   await logActivity(user.id, ActivityType.SIGN_OUT);
-  (await cookies()).delete('session');
+  (await cookies()).delete({ name: 'session', path: '/' });
 }
 
 const signInOrSignUpSchema = z.object({
@@ -261,7 +261,7 @@ export const deleteAccount = validatedActionWithUser(deleteAccountSchema, async 
     })
     .where(eq(users.id, user.id));
 
-  (await cookies()).delete('session');
+  (await cookies()).delete({ name: 'session', path: '/' });
   redirect('/sign-in');
 });
 
