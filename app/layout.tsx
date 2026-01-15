@@ -20,7 +20,7 @@ const manrope = Manrope({ subsets: ['latin'] });
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={manrope.className}>
-      <body className="min-h-[100dvh] bg-background text-foreground">
+      <body className="min-h-dvh bg-background text-foreground">
         <SWRConfig
           value={{
             fallback: {
