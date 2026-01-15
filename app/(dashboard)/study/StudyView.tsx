@@ -15,7 +15,10 @@ import {
   Eye,
   EyeOff,
   RotateCcw,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
+import { speakWord, stopSpeaking, isSpeaking, isSpeechSynthesisSupported } from '@/lib/utils';
 
 // Mock data for the study session
 const MOCK_WORD = {
@@ -50,6 +53,31 @@ export function StudyView() {
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [feedback, setFeedback] = useState<typeof MOCK_FEEDBACK | null>(null);
   const [showDefinition, setShowDefinition] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  // Speech synthesis state management
+  useEffect(() => {
+    if (!isSpeechSynthesisSupported()) return;
+
+    const updateSpeakingState = () => {
+      setIsPlaying(isSpeaking());
+    };
+
+    // Update speaking state periodically since Web Speech API doesn't provide precise callbacks
+    const interval = setInterval(updateSpeakingState, 100);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleSpeak = useCallback(() => {
+    if (isPlaying) {
+      stopSpeaking();
+      setIsPlaying(false);
+    } else {
+      speakWord(MOCK_WORD.word);
+      setIsPlaying(true);
+    }
+  }, [isPlaying]);
 
   // Timer effect
   useEffect(() => {
@@ -78,12 +106,16 @@ export function StudyView() {
     setHasSubmitted(false);
     setFeedback(null);
     setStudyCount((prev) => prev + 1);
+    stopSpeaking();
+    setIsPlaying(false);
   };
 
   const handleRetry = () => {
     setSentence('');
     setHasSubmitted(false);
     setFeedback(null);
+    stopSpeaking();
+    setIsPlaying(false);
   };
 
   return (
@@ -159,6 +191,29 @@ export function StudyView() {
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 w-fit">
               {MOCK_WORD.partOfSpeech}
             </span>
+            {/* Pronunciation controls */}
+            <div className="flex items-center gap-2 mt-2 sm:mt-0 sm:ml-auto">
+              {isSpeechSynthesisSupported() ? (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSpeak}
+                    className="gap-1.5 border-pink-200 hover:bg-pink-50 dark:border-pink-800 dark:hover:bg-pink-950"
+                    title="Listen to pronunciation"
+                  >
+                    {isPlaying ? (
+                      <VolumeX className="w-4 h-4 text-pink-500" />
+                    ) : (
+                      <Volume2 className="w-4 h-4 text-pink-500" />
+                    )}
+                    <span className="text-pink-600 dark:text-pink-400">Pronunciation</span>
+                  </Button>
+                </>
+              ) : (
+                <span className="text-xs text-muted-foreground">Speech not supported</span>
+              )}
+            </div>
           </div>
           {showDefinition && (
             <p className="text-muted-foreground mb-2">
