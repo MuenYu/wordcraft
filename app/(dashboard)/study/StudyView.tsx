@@ -20,24 +20,34 @@ import {
 } from 'lucide-react';
 import { speakWord, stopSpeaking, isSpeaking, isSpeechSynthesisSupported } from '@/lib/utils';
 
-// Mock data for the study session
-const MOCK_WORD = {
-  word: 'Ephemeral',
-  partOfSpeech: 'adjective',
-  definition: 'lasting for a very short time',
-  example: 'The ephemeral beauty of cherry blossoms reminds us to appreciate fleeting moments.',
-};
+// Mock vocabulary list for study session
+const MOCK_VOCAB_LIST = [
+  {
+    word: 'Ephemeral',
+    partOfSpeech: 'adjective',
+    definition: 'lasting for a very short time',
+    example: 'The ephemeral beauty of cherry blossoms reminds us to appreciate fleeting moments.',
+  },
+  {
+    word: 'Serendipity',
+    partOfSpeech: 'noun',
+    definition: 'the occurrence of events by chance in a happy way',
+    example: 'Finding that rare book at the yard sale was pure serendipity.',
+  },
+  {
+    word: 'Luminous',
+    partOfSpeech: 'adjective',
+    definition: 'full of or shedding light; bright or shining',
+    example: 'The luminous moon reflected beautifully on the calm lake.',
+  },
+];
 
-const MOCK_FEEDBACK = {
-  isCorrect: true,
-  score: 9,
-  feedback:
-    'Great sentence! You correctly used "ephemeral" to describe something short-lived. Consider using more vivid imagery to enhance your writing.',
-  suggestions: [
-    'Try adding more context about what specifically was ephemeral',
-    'Consider varying sentence structure for more engaging prose',
-  ],
-};
+// Calculate score based on sentence length (1 char = 1 point, 10+ chars = 10 points max)
+function calculateScore(sentence: string): { score: number; isPassing: boolean } {
+  const length = sentence.trim().length;
+  const score = Math.min(length, 10);
+  return { score, isPassing: length >= 10 };
+}
 
 function formatTime(seconds: number): string {
   const mins = Math.floor(seconds / 60);
@@ -47,13 +57,21 @@ function formatTime(seconds: number): string {
 
 export function StudyView() {
   const [elapsedTime, setElapsedTime] = useState(0);
-  const [studyCount, setStudyCount] = useState(5);
-  const [remainingCount] = useState(15);
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [completedWords, setCompletedWords] = useState<Set<number>>(new Set());
   const [sentence, setSentence] = useState('');
   const [hasSubmitted, setHasSubmitted] = useState(false);
-  const [feedback, setFeedback] = useState<typeof MOCK_FEEDBACK | null>(null);
+  const [feedback, setFeedback] = useState<{
+    score: number;
+    isPassing: boolean;
+    word: string;
+  } | null>(null);
   const [showDefinition, setShowDefinition] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
+
+  const currentWord = MOCK_VOCAB_LIST[currentWordIndex];
+  const remainingCount = MOCK_VOCAB_LIST.length - completedWords.size;
+  const isCompleted = completedWords.size === MOCK_VOCAB_LIST.length;
 
   // Speech synthesis state management
   useEffect(() => {
@@ -74,10 +92,10 @@ export function StudyView() {
       stopSpeaking();
       setIsPlaying(false);
     } else {
-      speakWord(MOCK_WORD.word);
+      speakWord(currentWord.word);
       setIsPlaying(true);
     }
-  }, [isPlaying]);
+  }, [isPlaying, currentWord.word]);
 
   // Timer effect
   useEffect(() => {
@@ -90,14 +108,25 @@ export function StudyView() {
   const handleSubmit = useCallback(() => {
     if (!sentence.trim()) return;
 
-    // Simulate AI feedback (mock)
+    const { score, isPassing } = calculateScore(sentence);
+
     setHasSubmitted(true);
-    setFeedback(MOCK_FEEDBACK);
-  }, [sentence]);
+    setFeedback({ score, isPassing, word: currentWord.word });
+
+    if (isPassing) {
+      setCompletedWords((prev) => new Set(prev).add(currentWordIndex));
+    }
+  }, [sentence, currentWord, currentWordIndex]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      handleSubmit();
+      if (feedback?.isPassing) {
+        handleNextWord();
+      } else if (hasSubmitted && feedback && !feedback.isPassing) {
+        handleRetry();
+      } else {
+        handleSubmit();
+      }
     }
   };
 
@@ -105,9 +134,25 @@ export function StudyView() {
     setSentence('');
     setHasSubmitted(false);
     setFeedback(null);
-    setStudyCount((prev) => prev + 1);
     stopSpeaking();
     setIsPlaying(false);
+
+    // Find next incomplete word
+    let nextIndex = currentWordIndex + 1;
+    if (nextIndex >= MOCK_VOCAB_LIST.length) {
+      nextIndex = 0;
+    }
+
+    // Only mark as complete if this was the last word and user passed
+    const wasLastWord = currentWordIndex === MOCK_VOCAB_LIST.length - 1;
+    const passedLastWord = feedback?.isPassing;
+
+    if (wasLastWord && passedLastWord) {
+      // User completed the last word, show congratulations
+      setCompletedWords(new Set(MOCK_VOCAB_LIST.map((_, i) => i)));
+    } else {
+      setCurrentWordIndex(nextIndex);
+    }
   };
 
   const handleRetry = () => {
@@ -149,7 +194,7 @@ export function StudyView() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Studied Today</p>
-                <p className="text-xl font-semibold">{studyCount} words</p>
+                <p className="text-xl font-semibold">{completedWords.size} words</p>
               </div>
             </div>
           </CardContent>
@@ -170,181 +215,188 @@ export function StudyView() {
         </Card>
       </div>
 
-      {/* Section 2.2: Current Word */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between gap-2">
-            <span className="text-lg">Current Word</span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowDefinition(!showDefinition)}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              {showDefinition ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </Button>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">
-            <h2 className="text-3xl font-bold text-pink-500">{MOCK_WORD.word}</h2>
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 w-fit">
-              {MOCK_WORD.partOfSpeech}
-            </span>
-            {/* Pronunciation controls */}
-            <div className="flex items-center gap-2 mt-2 sm:mt-0 sm:ml-auto">
-              {isSpeechSynthesisSupported() ? (
-                <>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleSpeak}
-                    className="gap-1.5 border-pink-200 hover:bg-pink-50 dark:border-pink-800 dark:hover:bg-pink-950"
-                    title="Listen to pronunciation"
-                  >
-                    {isPlaying ? (
-                      <VolumeX className="w-4 h-4 text-pink-500" />
-                    ) : (
-                      <Volume2 className="w-4 h-4 text-pink-500" />
-                    )}
-                    <span className="text-pink-600 dark:text-pink-400">Pronunciation</span>
-                  </Button>
-                </>
-              ) : (
-                <span className="text-xs text-muted-foreground">Speech not supported</span>
-              )}
+      {/* Congratulations Section - shown when all words are completed */}
+      {isCompleted ? (
+        <Card className="mb-6">
+          <CardContent className="py-12 text-center">
+            <div className="flex justify-center mb-4">
+              <div className="bg-pink-100 dark:bg-pink-900/30 p-4 rounded-full">
+                <Sparkles className="w-12 h-12 text-pink-600 dark:text-pink-400" />
+              </div>
             </div>
-          </div>
-          {showDefinition && (
-            <p className="text-muted-foreground mb-2">
-              <span className="font-medium text-foreground">Definition:</span>{' '}
-              {MOCK_WORD.definition}
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+              Congratulations!
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              You&apos;ve completed all {MOCK_VOCAB_LIST.length} words in this session.
             </p>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Section 2.3: Input Box */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="text-lg">Create Your Sentence</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="relative">
-            <Input
-              placeholder={`Write a sentence using "${MOCK_WORD.word}"...`}
-              value={sentence}
-              onChange={(e) => setSentence(e.target.value)}
-              onKeyDown={handleKeyDown}
-              disabled={hasSubmitted}
-              className="min-h-25 py-3 text-lg resize-none focus-visible:ring-pink-500 focus-visible:border-pink-500"
-            />
-            <p className="text-xs text-muted-foreground mt-2">
-              Press{' '}
-              <kbd className="px-1.5 py-0.5 rounded bg-secondary text-secondary-foreground text-xs">
-                Enter
-              </kbd>{' '}
-              to submit
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Section 2.4: AI Feedback - min-height container prevents layout shift */}
-      <div className="min-h-75">
-        {feedback && (
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          {/* Section 2.2: Current Word */}
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-primary" />
-                <span>AI Feedback</span>
+              <CardTitle className="flex items-center justify-between gap-2">
+                <span className="text-lg">Current Word</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowDefinition(!showDefinition)}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  {showDefinition ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </Button>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {/* Correctness indicator */}
-              <div className="flex items-center gap-3 mb-4 p-4 rounded-lg bg-muted/50">
-                {feedback.isCorrect ? (
-                  <>
-                    <CheckCircle2 className="w-6 h-6 text-green-600 dark:text-green-400" />
-                    <div>
-                      <p className="font-medium">Well done!</p>
-                      <p className="text-sm text-muted-foreground">
-                        Your sentence is grammatically correct and uses the word appropriately.
-                      </p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <XCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
-                    <div>
-                      <p className="font-medium">Needs improvement</p>
-                      <p className="text-sm text-muted-foreground">
-                        There are some issues with your sentence. Check the suggestions below.
-                      </p>
-                    </div>
-                  </>
-                )}
-              </div>
-
-              {/* Score */}
-              <div className="mb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">Score</span>
-                  <span className="text-sm font-semibold">{feedback.score}/10</span>
-                </div>
-                <div className="h-2 bg-pink-100 dark:bg-pink-900/30 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-pink-500 rounded-full transition-all duration-500"
-                    style={{ width: `${feedback.score * 10}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* AI Comment */}
-              <div className="p-4 rounded-lg bg-primary/5 border border-primary/10 mb-4">
-                <p className="text-sm">{feedback.feedback}</p>
-              </div>
-
-              {/* Suggestions */}
-              {feedback.suggestions.length > 0 && (
-                <div>
-                  <p className="text-sm font-medium mb-2">Suggestions for improvement:</p>
-                  <ul className="space-y-2">
-                    {feedback.suggestions.map((suggestion, index) => (
-                      <li
-                        key={index}
-                        className="flex items-start gap-2 text-sm text-muted-foreground"
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">
+                <h2 className="text-3xl font-bold text-pink-500">{currentWord.word}</h2>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 w-fit">
+                  {currentWord.partOfSpeech}
+                </span>
+                {/* Pronunciation controls */}
+                <div className="flex items-center gap-2 mt-2 sm:mt-0 sm:ml-auto">
+                  {isSpeechSynthesisSupported() ? (
+                    <>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleSpeak}
+                        className="gap-1.5 border-pink-200 hover:bg-pink-50 dark:border-pink-800 dark:hover:bg-pink-950"
+                        title="Listen to pronunciation"
                       >
-                        <ArrowRight className="w-4 h-4 mt-0.5 shrink-0" />
-                        <span>{suggestion}</span>
-                      </li>
-                    ))}
-                  </ul>
+                        {isPlaying ? (
+                          <VolumeX className="w-4 h-4 text-pink-500" />
+                        ) : (
+                          <Volume2 className="w-4 h-4 text-pink-500" />
+                        )}
+                        <span className="text-pink-600 dark:text-pink-400">Pronunciation</span>
+                      </Button>
+                    </>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">Speech not supported</span>
+                  )}
                 </div>
+              </div>
+              {showDefinition && (
+                <p className="text-muted-foreground mb-2">
+                  <span className="font-medium text-foreground">Definition:</span>{' '}
+                  {currentWord.definition}
+                </p>
               )}
+            </CardContent>
+          </Card>
 
-              {/* Next button */}
-              <div className="mt-6 flex justify-end gap-3">
-                <Button
-                  variant="outline"
-                  onClick={handleRetry}
-                  className="inline-flex items-center gap-2"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                  Retry
-                </Button>
-                <Button
-                  onClick={handleNextWord}
-                  className="inline-flex items-center gap-2 bg-pink-500! text-white! hover:bg-pink-600!"
-                >
-                  Next Word
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
+          {/* Section 2.3: Input Box */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="text-lg">Create Your Sentence</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <Input
+                  placeholder={`Write a sentence using "${currentWord.word}"...`}
+                  value={sentence}
+                  onChange={(e) => setSentence(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  className="min-h-25 py-3 text-lg resize-none focus-visible:ring-pink-500 focus-visible:border-pink-500"
+                />
+                <p className="text-xs text-muted-foreground mt-2">
+                  Press{' '}
+                  <kbd className="px-1.5 py-0.5 rounded bg-secondary text-secondary-foreground text-xs">
+                    Enter
+                  </kbd>{' '}
+                  to submit
+                </p>
               </div>
             </CardContent>
           </Card>
-        )}
-      </div>
+
+          {/* Section 2.4: AI Feedback - min-height container prevents layout shift */}
+          <div className="min-h-75">
+            {feedback && (
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-primary" />
+                    <span>AI Feedback</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {/* Correctness indicator */}
+                  <div className="flex items-center gap-3 mb-4 p-4 rounded-lg bg-muted/50">
+                    {feedback.isPassing ? (
+                      <>
+                        <CheckCircle2 className="w-6 h-6 text-green-600 dark:text-green-400" />
+                        <div>
+                          <p className="font-medium">Well done!</p>
+                          <p className="text-sm text-muted-foreground">
+                            Your sentence is grammatically correct and uses the word appropriately.
+                          </p>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <XCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
+                        <div>
+                          <p className="font-medium">Needs improvement</p>
+                          <p className="text-sm text-muted-foreground">
+                            There are some issues with your sentence. Try to make it longer (10+
+                            characters).
+                          </p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Score */}
+                  <div className="mb-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium">Score</span>
+                      <span className="text-sm font-semibold">{feedback.score}/10</span>
+                    </div>
+                    <div className="h-2 bg-pink-100 dark:bg-pink-900/30 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-pink-500 rounded-full transition-all duration-500"
+                        style={{ width: `${feedback.score * 10}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Feedback message */}
+                  <div className="p-4 rounded-lg bg-primary/5 border border-primary/10 mb-4">
+                    <p className="text-sm">
+                      {feedback.isPassing
+                        ? `Great job using "${feedback.word}" in your sentence!`
+                        : `Try adding more context to your sentence using "${feedback.word}".`}
+                    </p>
+                  </div>
+
+                  {/* Next button */}
+                  <div className="mt-6 flex justify-end gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={handleRetry}
+                      className="inline-flex items-center gap-2"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      Retry
+                    </Button>
+                    <Button
+                      onClick={handleNextWord}
+                      className="inline-flex items-center gap-2 bg-pink-500! text-white! hover:bg-pink-600!"
+                    >
+                      Next Word
+                      <ArrowRight className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </>
+      )}
     </section>
   );
 }
