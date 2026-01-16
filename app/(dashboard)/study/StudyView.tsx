@@ -68,10 +68,11 @@ export function StudyView() {
   } | null>(null);
   const [showDefinition, setShowDefinition] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [showCongrats, setShowCongrats] = useState(false);
 
   const currentWord = MOCK_VOCAB_LIST[currentWordIndex];
   const remainingCount = MOCK_VOCAB_LIST.length - completedWords.size;
-  const isCompleted = completedWords.size === MOCK_VOCAB_LIST.length;
+  const isSessionComplete = completedWords.size === MOCK_VOCAB_LIST.length;
 
   // Speech synthesis state management
   useEffect(() => {
@@ -97,13 +98,16 @@ export function StudyView() {
     }
   }, [isPlaying, currentWord.word]);
 
-  // Timer effect
+  // Timer effect - stops when all words are completed
   useEffect(() => {
+    if (isSessionComplete) return;
+
     const timer = setInterval(() => {
       setElapsedTime((prev) => prev + 1);
     }, 1000);
+
     return () => clearInterval(timer);
-  }, []);
+  }, [isSessionComplete]);
 
   const handleSubmit = useCallback(() => {
     if (!sentence.trim()) return;
@@ -120,7 +124,11 @@ export function StudyView() {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      if (feedback?.isPassing) {
+      // Don't auto-advance on last word - user must click button to go to congratulations
+      const isLastWord = currentWordIndex === MOCK_VOCAB_LIST.length - 1;
+      if (hasSubmitted && feedback?.isPassing && isLastWord) {
+        return; // Let user click the button manually
+      } else if (feedback?.isPassing) {
         handleNextWord();
       } else if (hasSubmitted && feedback && !feedback.isPassing) {
         handleRetry();
@@ -131,12 +139,6 @@ export function StudyView() {
   };
 
   const handleNextWord = () => {
-    setSentence('');
-    setHasSubmitted(false);
-    setFeedback(null);
-    stopSpeaking();
-    setIsPlaying(false);
-
     // Find next incomplete word
     let nextIndex = currentWordIndex + 1;
     if (nextIndex >= MOCK_VOCAB_LIST.length) {
@@ -148,9 +150,20 @@ export function StudyView() {
     const passedLastWord = feedback?.isPassing;
 
     if (wasLastWord && passedLastWord) {
-      // User completed the last word, show congratulations
-      setCompletedWords(new Set(MOCK_VOCAB_LIST.map((_, i) => i)));
+      // User passed the last word - show congratulations
+      stopSpeaking();
+      setIsPlaying(false);
+      setSentence('');
+      setHasSubmitted(false);
+      setFeedback(null);
+      setShowCongrats(true);
     } else {
+      // Reset for next word
+      setSentence('');
+      setHasSubmitted(false);
+      setFeedback(null);
+      stopSpeaking();
+      setIsPlaying(false);
       setCurrentWordIndex(nextIndex);
     }
   };
@@ -216,7 +229,7 @@ export function StudyView() {
       </div>
 
       {/* Congratulations Section - shown when all words are completed */}
-      {isCompleted ? (
+      {showCongrats ? (
         <Card className="mb-6">
           <CardContent className="py-12 text-center">
             <div className="flex justify-center mb-4">
@@ -300,6 +313,7 @@ export function StudyView() {
                   value={sentence}
                   onChange={(e) => setSentence(e.target.value)}
                   onKeyDown={handleKeyDown}
+                  disabled={hasSubmitted}
                   className="min-h-25 py-3 text-lg resize-none focus-visible:ring-pink-500 focus-visible:border-pink-500"
                 />
                 <p className="text-xs text-muted-foreground mt-2">
