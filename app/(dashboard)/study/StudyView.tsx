@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -70,6 +70,9 @@ export function StudyView() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showCongrats, setShowCongrats] = useState(false);
 
+  // Guard against rapid Enter key presses during state transition
+  const justSubmitted = useRef(false);
+
   const currentWord = MOCK_VOCAB_LIST[currentWordIndex];
   const remainingCount = MOCK_VOCAB_LIST.length - completedWords.size;
   const isSessionComplete = completedWords.size === MOCK_VOCAB_LIST.length;
@@ -123,18 +126,29 @@ export function StudyView() {
   }, [sentence, currentWord, currentWordIndex]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      // Don't auto-advance on last word - user must click button to go to congratulations
-      const isLastWord = currentWordIndex === MOCK_VOCAB_LIST.length - 1;
-      if (hasSubmitted && feedback?.isPassing && isLastWord) {
-        return; // Let user click the button manually
-      } else if (feedback?.isPassing) {
-        handleNextWord();
-      } else if (hasSubmitted && feedback && !feedback.isPassing) {
-        handleRetry();
-      } else {
-        handleSubmit();
-      }
+    if (e.key !== 'Enter') return;
+
+    // Avoid IME composition issues
+    if (e.nativeEvent.isComposing) return;
+
+    // Prevent key repeat from triggering actions
+    if (e.repeat) return;
+
+    // Guard against double submission
+    if (justSubmitted.current) return;
+
+    if (feedback?.isPassing) {
+      justSubmitted.current = true;
+      handleNextWord();
+      return;
+    } else if (hasSubmitted && feedback && !feedback.isPassing) {
+      justSubmitted.current = true;
+      handleRetry();
+      return;
+    } else if (sentence.trim()) {
+      justSubmitted.current = true;
+      handleSubmit();
+      return;
     }
   };
 
@@ -175,6 +189,42 @@ export function StudyView() {
     stopSpeaking();
     setIsPlaying(false);
   };
+
+  // Clear the Enter-press guard on key release (prevents key-repeat advancing)
+  useEffect(() => {
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        justSubmitted.current = false;
+      }
+    };
+
+    window.addEventListener('keyup', handleKeyUp);
+    return () => window.removeEventListener('keyup', handleKeyUp);
+  }, []);
+
+  // Handle Enter key globally when input is disabled
+  useEffect(() => {
+    if (!hasSubmitted) return;
+
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Enter' || e.repeat) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (justSubmitted.current) return;
+      justSubmitted.current = true;
+
+      if (feedback?.isPassing) {
+        handleNextWord();
+      } else {
+        handleRetry();
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, [hasSubmitted, feedback, currentWordIndex]);
 
   return (
     <section className="flex-1 px-4 lg:px-8 py-8 max-w-4xl mx-auto w-full">
