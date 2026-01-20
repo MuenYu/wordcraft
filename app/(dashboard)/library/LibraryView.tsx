@@ -14,18 +14,38 @@ const wordStatusData = [
 ];
 
 // Mock data for daily study counts (last 30 days)
-function generateDailyStudyData() {
-  const data = [];
-  for (let i = 29; i >= 0; i--) {
-    data.push({
-      label: i === 0 ? 'Today' : `-${i}`,
-      count: Math.floor(Math.random() * 50) + 10, // Random count between 10-60
-    });
-  }
-  return data;
-}
-
-const dailyStudyData = generateDailyStudyData();
+const dailyStudyData = [
+  { label: '-29', count: 23 },
+  { label: '-28', count: 45 },
+  { label: '-27', count: 31 },
+  { label: '-26', count: 52 },
+  { label: '-25', count: 28 },
+  { label: '-24', count: 41 },
+  { label: '-23', count: 36 },
+  { label: '-22', count: 19 },
+  { label: '-21', count: 58 },
+  { label: '-20', count: 42 },
+  { label: '-19', count: 25 },
+  { label: '-18', count: 33 },
+  { label: '-17', count: 47 },
+  { label: '-16', count: 39 },
+  { label: '-15', count: 22 },
+  { label: '-14', count: 56 },
+  { label: '-13', count: 48 },
+  { label: '-12', count: 31 },
+  { label: '-11', count: 29 },
+  { label: '-10', count: 44 },
+  { label: '-9', count: 37 },
+  { label: '-8', count: 53 },
+  { label: '-7', count: 26 },
+  { label: '-6', count: 40 },
+  { label: '-5', count: 34 },
+  { label: '-4', count: 21 },
+  { label: '-3', count: 49 },
+  { label: '-2', count: 38 },
+  { label: '-1', count: 55 },
+  { label: 'Today', count: 32 },
+];
 const averageStudyCount = Math.round(
   dailyStudyData.reduce((acc, item) => acc + item.count, 0) / dailyStudyData.length,
 );
@@ -64,7 +84,9 @@ function LineChart({
   const chartHeight = height - padding * 2;
   const barWidth = chartWidth / data.length - 4;
 
-  const averageY = height - padding - (averageLine / maxCount) * chartHeight;
+  // Round to 2 decimal places to prevent hydration mismatch from floating-point precision
+  const averageY =
+    Math.round((height - padding - (averageLine / maxCount) * chartHeight) * 100) / 100;
 
   return (
     <div className="relative">
@@ -76,8 +98,9 @@ function LineChart({
       >
         {/* Y-axis grid lines */}
         {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
-          const y = height - padding - ratio * chartHeight;
-          const value = Math.round(maxCount * ratio);
+          const y = Math.round(height - padding - ratio * chartHeight);
+          // Add small epsilon before rounding to handle floating-point precision issues
+          const value = Math.round(maxCount * ratio + 1e-9);
           return (
             <g key={ratio}>
               <line
@@ -116,9 +139,9 @@ function LineChart({
 
         {/* Bars */}
         {data.map((item, index) => {
-          const x = padding + index * (chartWidth / data.length) + 2;
-          const barHeight = (item.count / maxCount) * chartHeight;
-          const y = height - padding - barHeight;
+          const x = Math.round(padding + index * (chartWidth / data.length) + 2);
+          const barHeight = Math.round((item.count / maxCount) * chartHeight * 100) / 100;
+          const y = Math.round(height - padding - barHeight);
           return (
             <g key={index}>
               <rect
@@ -129,11 +152,8 @@ function LineChart({
                 rx="3"
                 fill="#ec4899"
                 className="cursor-pointer hover:opacity-80 transition-opacity"
+                aria-label={`${item.label}: ${item.count} words`}
               />
-              {/* Tooltip on hover */}
-              <title>
-                {item.label}: {item.count} words
-              </title>
             </g>
           );
         })}
@@ -143,7 +163,9 @@ function LineChart({
           .filter((_, index) => index % 5 === 0)
           .map((item, index) => {
             const originalIndex = index * 5;
-            const x = padding + originalIndex * (chartWidth / data.length) + barWidth / 2 + 2;
+            const x = Math.round(
+              padding + originalIndex * (chartWidth / data.length) + barWidth / 2 + 2,
+            );
             return (
               <text
                 key={originalIndex}

@@ -69,6 +69,7 @@ export function StudyView() {
   const [showDefinition, setShowDefinition] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showCongrats, setShowCongrats] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(false);
 
   // Guard against rapid Enter key presses during state transition
   const justSubmitted = useRef(false);
@@ -77,9 +78,14 @@ export function StudyView() {
   const remainingCount = MOCK_VOCAB_LIST.length - completedWords.size;
   const isSessionComplete = completedWords.size === MOCK_VOCAB_LIST.length;
 
+  // Check speech synthesis support after mount (avoids hydration mismatch)
+  useEffect(() => {
+    setSpeechSupported(isSpeechSynthesisSupported());
+  }, []);
+
   // Speech synthesis state management
   useEffect(() => {
-    if (!isSpeechSynthesisSupported()) return;
+    if (!speechSupported) return;
 
     const updateSpeakingState = () => {
       setIsPlaying(isSpeaking());
@@ -89,7 +95,7 @@ export function StudyView() {
     const interval = setInterval(updateSpeakingState, 100);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [speechSupported]);
 
   const handleSpeak = useCallback(() => {
     if (isPlaying) {
@@ -320,7 +326,7 @@ export function StudyView() {
                 </span>
                 {/* Pronunciation controls */}
                 <div className="flex items-center gap-2 mt-2 sm:mt-0 sm:ml-auto">
-                  {isSpeechSynthesisSupported() ? (
+                  {speechSupported ? (
                     <>
                       <Button
                         variant="outline"
