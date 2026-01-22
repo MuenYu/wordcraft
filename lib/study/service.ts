@@ -1,15 +1,8 @@
 'use server';
 
 import { db } from '@/lib/db/drizzle';
-import {
-  flashcards,
-  vocabItems,
-  vocabLists,
-  reviews,
-  flashcardStates,
-  type FlashcardState,
-} from '@/lib/db/schema';
-import { and, desc, eq, gte, or, sql } from 'drizzle-orm';
+import { flashcards, vocabItems, vocabLists, reviews, type FlashcardState } from '@/lib/db/schema';
+import { and, desc, eq, gte, notInArray, or, sql } from 'drizzle-orm';
 
 export interface StudyCard {
   flashcardId: number;
@@ -52,7 +45,7 @@ export async function getStudyQueueForUser(
   ];
 
   if (excludeFlashcardIds.length > 0) {
-    whereConditions.push(sql`${flashcards.id} NOT IN (${excludeFlashcardIds.join(',')})`);
+    whereConditions.push(notInArray(flashcards.id, excludeFlashcardIds));
   }
 
   const cards = await db
