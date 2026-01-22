@@ -1,13 +1,6 @@
-import { sql, eq, and, desc, gte, lte, inArray } from 'drizzle-orm';
+import { sql, eq, and, desc, gte, lte } from 'drizzle-orm';
 import { db } from './drizzle';
-import {
-  flashcards,
-  vocabItems,
-  vocabLists,
-  reviews,
-  flashcardStates,
-  type FlashcardState,
-} from './schema';
+import { flashcards, vocabItems, vocabLists, reviews, flashcardStates } from './schema';
 
 // Color mapping for donut chart states
 const STATE_COLORS: Record<string, string> = {
@@ -50,6 +43,12 @@ function computeMasteryLevel(intervalDays: number, state: string): number {
   return Math.min(intervalScore + bonus, 100);
 }
 
+// Format date as YYYY-MM-DD in local time (matches DB date_trunc output)
+function formatDateKey(value: Date | string): string {
+  if (typeof value === 'string') return value;
+  return value.toLocaleDateString('en-CA');
+}
+
 /**
  * Get word mastery status breakdown for user's flashcards.
  */
@@ -86,7 +85,10 @@ async function getWordStatus(userId: number) {
  */
 async function getDailyStudyActivity(userId: number) {
   const now = new Date();
-  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+  // Use local day boundaries to avoid UTC/Local timezone mismatch
+  const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+  const thirtyDaysAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29);
 
   // Get review counts grouped by day
   const rawData = await db
@@ -102,7 +104,7 @@ async function getDailyStudyActivity(userId: number) {
       and(
         eq(vocabLists.userId, userId),
         gte(reviews.reviewedAt, thirtyDaysAgo),
-        lte(reviews.reviewedAt, now),
+        lte(reviews.reviewedAt, endOfToday),
       ),
     )
     .groupBy(sql`date_trunc('day', ${reviews.reviewedAt})`)
@@ -111,14 +113,14 @@ async function getDailyStudyActivity(userId: number) {
   // Build a map for quick lookup
   const countByDate = new Map<string, number>();
   for (const row of rawData) {
-    countByDate.set(row.day, row.count);
+    countByDate.set(formatDateKey(row.day), row.count);
   }
 
   // Generate 30 days of data, filling missing days with 0
   const result: { label: string; count: number }[] = [];
   for (let i = 29; i >= 0; i--) {
-    const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-    const dateStr = date.toISOString().split('T')[0];
+    const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+    const dateStr = formatDateKey(date);
     const count = countByDate.get(dateStr) ?? 0;
 
     // Label format matches original mock: "-N" for days ago, "Today" for the last one

@@ -19,7 +19,10 @@ function LineChart({
   data: { label: string; count: number }[];
   averageLine: number;
 }) {
-  const maxCount = Math.max(...data.map((d) => d.count), averageLine);
+  const counts = data.map((d) => d.count);
+  const rawMax = Math.max(...counts, averageLine);
+  const scaleMax = rawMax > 0 ? rawMax : 1;
+
   const width = 500;
   const height = 200;
   const padding = 40;
@@ -27,9 +30,18 @@ function LineChart({
   const chartHeight = height - padding * 2;
   const barWidth = chartWidth / data.length - 4;
 
+  // Guard against empty data
+  if (data.length === 0) {
+    return (
+      <div className="relative h-[200px] flex items-center justify-center">
+        <span className="text-sm text-gray-500">No study activity yet</span>
+      </div>
+    );
+  }
+
   // Round to 2 decimal places to prevent hydration mismatch from floating-point precision
   const averageY =
-    Math.round((height - padding - (averageLine / maxCount) * chartHeight) * 100) / 100;
+    Math.round((height - padding - (averageLine / scaleMax) * chartHeight) * 100) / 100;
 
   return (
     <div className="relative">
@@ -43,7 +55,7 @@ function LineChart({
         {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
           const y = Math.round(height - padding - ratio * chartHeight);
           // Add small epsilon before rounding to handle floating-point precision issues
-          const value = Math.round(maxCount * ratio + 1e-9);
+          const value = Math.round(scaleMax * ratio + 1e-9);
           return (
             <g key={ratio}>
               <line
@@ -83,7 +95,7 @@ function LineChart({
         {/* Bars */}
         {data.map((item, index) => {
           const x = Math.round(padding + index * (chartWidth / data.length) + 2);
-          const barHeight = Math.round((item.count / maxCount) * chartHeight * 100) / 100;
+          const barHeight = Math.round((item.count / scaleMax) * chartHeight * 100) / 100;
           const y = Math.round(height - padding - barHeight);
           return (
             <g key={index}>
@@ -138,6 +150,21 @@ function DonutChart({
   const total = data.reduce((acc, item) => acc + item.value, 0);
   const radius = 80;
   const circumference = 2 * Math.PI * radius;
+
+  if (total === 0) {
+    return (
+      <div className="relative flex items-center justify-center h-[200px]">
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-3xl font-bold text-gray-900">{centerValue}</span>
+          <span className="text-sm text-gray-500">{centerLabel}</span>
+        </div>
+        <svg width="200" height="200" className="transform -rotate-90">
+          <circle cx="100" cy="100" r={radius} fill="none" stroke="#f3f4f6" strokeWidth="24" />
+        </svg>
+      </div>
+    );
+  }
+
   let offset = 0;
 
   const segments = data.map((item) => {
@@ -192,9 +219,12 @@ export function LibraryView({ data }: { data: LibraryOverview }) {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
-  const averageStudyCount = Math.round(
-    data.dailyStudy.reduce((acc, item) => acc + item.count, 0) / data.dailyStudy.length,
-  );
+  const averageStudyCount =
+    data.dailyStudy.length > 0
+      ? Math.round(
+          data.dailyStudy.reduce((acc, item) => acc + item.count, 0) / data.dailyStudy.length,
+        )
+      : 0;
 
   return (
     <div className="flex-1">
