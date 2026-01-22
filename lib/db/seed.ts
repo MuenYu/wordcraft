@@ -86,6 +86,7 @@ async function seed() {
 
   // Seed vocab items
   const vocabItemsData = [
+    // Original 16 items
     {
       term: 'serendipity',
       partOfSpeech: 'noun',
@@ -181,6 +182,25 @@ async function seed() {
       partOfSpeech: 'verb',
       definition: 'Hanging from something; temporarily prevented from continuing',
       exampleSentence: 'The particles were suspended in the liquid.',
+    },
+    // Stubborn words (high review count but low mastery - will show in "Stubborn Words" section)
+    {
+      term: 'ineffable',
+      partOfSpeech: 'adjective',
+      definition: 'Too great or extreme to be expressed in words',
+      exampleSentence: 'The view from the mountain was ineffable.',
+    },
+    {
+      term: 'pernicious',
+      partOfSpeech: 'adjective',
+      definition: 'Having a harmful effect, especially in a gradual or subtle way',
+      exampleSentence: 'The pernicious effects of misinformation are hard to reverse.',
+    },
+    {
+      term: 'cacophony',
+      partOfSpeech: 'noun',
+      definition: 'A harsh, discordant mixture of sounds',
+      exampleSentence: 'The cacophony of car horns made it impossible to concentrate.',
     },
   ];
 
@@ -382,6 +402,41 @@ async function seed() {
       correctStreak: 0,
       lastReviewedAt: daysAgo(10),
     },
+    // Stubborn words (high review count but low mastery - reviewCount >= 10, mastery <= 40%)
+    // intervalDays <= 3 keeps mastery at ~34% or lower, state is pending/memorizing
+    {
+      vocabItemId: insertedVocabItems[16].id,
+      state: 'pending' as const,
+      dueAt: daysFromNow(1),
+      intervalDays: 3,
+      easeFactor: '2.30',
+      reviewCount: 12,
+      lapseCount: 4,
+      correctStreak: 0,
+      lastReviewedAt: daysAgo(1),
+    },
+    {
+      vocabItemId: insertedVocabItems[17].id,
+      state: 'memorizing' as const,
+      dueAt: hoursAgo(2),
+      intervalDays: 2,
+      easeFactor: '2.20',
+      reviewCount: 15,
+      lapseCount: 6,
+      correctStreak: 1,
+      lastReviewedAt: hoursAgo(6),
+    },
+    {
+      vocabItemId: insertedVocabItems[18].id,
+      state: 'pending' as const,
+      dueAt: daysAgo(1),
+      intervalDays: 0,
+      easeFactor: '2.10',
+      reviewCount: 10,
+      lapseCount: 5,
+      correctStreak: 0,
+      lastReviewedAt: daysAgo(2),
+    },
   ];
 
   const insertedFlashcards = await db
@@ -434,6 +489,47 @@ async function seed() {
     { flashcardId: insertedFlashcards[14].id, result: 'pass' as const, reviewedAt: daysAgo(35) },
     { flashcardId: insertedFlashcards[14].id, result: 'pass' as const, reviewedAt: daysAgo(20) },
     { flashcardId: insertedFlashcards[14].id, result: 'pass' as const, reviewedAt: daysAgo(5) },
+    // Stubborn word reviews (spread across last 30 days for study activity chart)
+    // vocabItem 16 - ineffable (pending, 12 reviews)
+    { flashcardId: insertedFlashcards[16].id, result: 'fail' as const, reviewedAt: daysAgo(29) },
+    { flashcardId: insertedFlashcards[16].id, result: 'fail' as const, reviewedAt: daysAgo(27) },
+    { flashcardId: insertedFlashcards[16].id, result: 'pass' as const, reviewedAt: daysAgo(25) },
+    { flashcardId: insertedFlashcards[16].id, result: 'fail' as const, reviewedAt: daysAgo(22) },
+    { flashcardId: insertedFlashcards[16].id, result: 'pass' as const, reviewedAt: daysAgo(20) },
+    { flashcardId: insertedFlashcards[16].id, result: 'fail' as const, reviewedAt: daysAgo(17) },
+    { flashcardId: insertedFlashcards[16].id, result: 'pass' as const, reviewedAt: daysAgo(14) },
+    { flashcardId: insertedFlashcards[16].id, result: 'fail' as const, reviewedAt: daysAgo(11) },
+    { flashcardId: insertedFlashcards[16].id, result: 'pass' as const, reviewedAt: daysAgo(8) },
+    { flashcardId: insertedFlashcards[16].id, result: 'fail' as const, reviewedAt: daysAgo(6) },
+    { flashcardId: insertedFlashcards[16].id, result: 'pass' as const, reviewedAt: daysAgo(3) },
+    { flashcardId: insertedFlashcards[16].id, result: 'pass' as const, reviewedAt: hoursAgo(12) },
+    // vocabItem 17 - pernicious (memorizing, 15 reviews)
+    { flashcardId: insertedFlashcards[17].id, result: 'fail' as const, reviewedAt: daysAgo(30) },
+    { flashcardId: insertedFlashcards[17].id, result: 'fail' as const, reviewedAt: daysAgo(28) },
+    { flashcardId: insertedFlashcards[17].id, result: 'fail' as const, reviewedAt: daysAgo(26) },
+    { flashcardId: insertedFlashcards[17].id, result: 'pass' as const, reviewedAt: daysAgo(24) },
+    { flashcardId: insertedFlashcards[17].id, result: 'fail' as const, reviewedAt: daysAgo(21) },
+    { flashcardId: insertedFlashcards[17].id, result: 'pass' as const, reviewedAt: daysAgo(19) },
+    { flashcardId: insertedFlashcards[17].id, result: 'fail' as const, reviewedAt: daysAgo(16) },
+    { flashcardId: insertedFlashcards[17].id, result: 'fail' as const, reviewedAt: daysAgo(13) },
+    { flashcardId: insertedFlashcards[17].id, result: 'pass' as const, reviewedAt: daysAgo(10) },
+    { flashcardId: insertedFlashcards[17].id, result: 'fail' as const, reviewedAt: daysAgo(8) },
+    { flashcardId: insertedFlashcards[17].id, result: 'pass' as const, reviewedAt: daysAgo(5) },
+    { flashcardId: insertedFlashcards[17].id, result: 'fail' as const, reviewedAt: daysAgo(3) },
+    { flashcardId: insertedFlashcards[17].id, result: 'pass' as const, reviewedAt: daysAgo(1) },
+    { flashcardId: insertedFlashcards[17].id, result: 'fail' as const, reviewedAt: hoursAgo(18) },
+    { flashcardId: insertedFlashcards[17].id, result: 'pass' as const, reviewedAt: hoursAgo(6) },
+    // vocabItem 18 - cacophony (pending, 10 reviews)
+    { flashcardId: insertedFlashcards[18].id, result: 'fail' as const, reviewedAt: daysAgo(28) },
+    { flashcardId: insertedFlashcards[18].id, result: 'fail' as const, reviewedAt: daysAgo(25) },
+    { flashcardId: insertedFlashcards[18].id, result: 'pass' as const, reviewedAt: daysAgo(22) },
+    { flashcardId: insertedFlashcards[18].id, result: 'fail' as const, reviewedAt: daysAgo(19) },
+    { flashcardId: insertedFlashcards[18].id, result: 'pass' as const, reviewedAt: daysAgo(15) },
+    { flashcardId: insertedFlashcards[18].id, result: 'fail' as const, reviewedAt: daysAgo(12) },
+    { flashcardId: insertedFlashcards[18].id, result: 'pass' as const, reviewedAt: daysAgo(9) },
+    { flashcardId: insertedFlashcards[18].id, result: 'fail' as const, reviewedAt: daysAgo(6) },
+    { flashcardId: insertedFlashcards[18].id, result: 'pass' as const, reviewedAt: daysAgo(3) },
+    { flashcardId: insertedFlashcards[18].id, result: 'pass' as const, reviewedAt: hoursAgo(8) },
   ];
 
   if (reviewsData.length > 0) {
@@ -472,7 +568,7 @@ async function seed() {
   console.warn(`- 1 vocab list: "${list.name}"`);
   console.warn(`- ${insertedVocabItems.length} vocab items`);
   console.warn(`- ${insertedFlashcards.length} flashcards`);
-  console.warn(`- ${reviewsData.length} reviews`);
+  console.warn(`- ${reviewsData.length} reviews (including stubborn words and 30-day activity)`);
   console.warn('- 3 activity logs');
 
   const shouldCreateStripeProducts = await confirm('Do you want to create Stripe products?');

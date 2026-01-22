@@ -5,69 +5,12 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
-// Mock data for the donut chart - word learning status
-const wordStatusData = [
-  { label: 'Deep Matured', value: 45, color: '#22c55e' }, // green
-  { label: 'Matured', value: 120, color: '#3b82f6' }, // blue
-  { label: 'Memorizing', value: 85, color: '#f59e0b' }, // amber
-  { label: 'Pending', value: 50, color: '#94a3b8' }, // gray
-];
-
-// Mock data for daily study counts (last 30 days)
-const dailyStudyData = [
-  { label: '-29', count: 23 },
-  { label: '-28', count: 45 },
-  { label: '-27', count: 31 },
-  { label: '-26', count: 52 },
-  { label: '-25', count: 28 },
-  { label: '-24', count: 41 },
-  { label: '-23', count: 36 },
-  { label: '-22', count: 19 },
-  { label: '-21', count: 58 },
-  { label: '-20', count: 42 },
-  { label: '-19', count: 25 },
-  { label: '-18', count: 33 },
-  { label: '-17', count: 47 },
-  { label: '-16', count: 39 },
-  { label: '-15', count: 22 },
-  { label: '-14', count: 56 },
-  { label: '-13', count: 48 },
-  { label: '-12', count: 31 },
-  { label: '-11', count: 29 },
-  { label: '-10', count: 44 },
-  { label: '-9', count: 37 },
-  { label: '-8', count: 53 },
-  { label: '-7', count: 26 },
-  { label: '-6', count: 40 },
-  { label: '-5', count: 34 },
-  { label: '-4', count: 21 },
-  { label: '-3', count: 49 },
-  { label: '-2', count: 38 },
-  { label: '-1', count: 55 },
-  { label: 'Today', count: 32 },
-];
-const averageStudyCount = Math.round(
-  dailyStudyData.reduce((acc, item) => acc + item.count, 0) / dailyStudyData.length,
-);
-
-// Mock data for stubborn words - words studied many times but low mastery
-const stubbornWordsData = [
-  { word: 'serendipity', partOfSpeech: 'noun', studyCount: 23, masteryLevel: 28 },
-  { word: 'ubiquitous', partOfSpeech: 'adj', studyCount: 31, masteryLevel: 22 },
-  { word: 'paradigm', partOfSpeech: 'noun', studyCount: 18, masteryLevel: 35 },
-  { word: 'ameliorate', partOfSpeech: 'verb', studyCount: 27, masteryLevel: 24 },
-  { word: 'ephemeral', partOfSpeech: 'adj', studyCount: 21, masteryLevel: 32 },
-  { word: 'obfuscate', partOfSpeech: 'verb', studyCount: 19, masteryLevel: 29 },
-  { word: 'pernicious', partOfSpeech: 'adj', studyCount: 25, masteryLevel: 26 },
-  { word: 'quintessential', partOfSpeech: 'noun', studyCount: 22, masteryLevel: 31 },
-  { word: 'ameliorate', partOfSpeech: 'verb', studyCount: 28, masteryLevel: 23 },
-  { word: 'loquacious', partOfSpeech: 'adj', studyCount: 20, masteryLevel: 33 },
-  { word: 'obsequious', partOfSpeech: 'adj', studyCount: 24, masteryLevel: 27 },
-  { word: 'pragmatic', partOfSpeech: 'adj', studyCount: 26, masteryLevel: 30 },
-  { word: 'resilient', partOfSpeech: 'adj', studyCount: 29, masteryLevel: 25 },
-  { word: 'sarcastic', partOfSpeech: 'adj', studyCount: 17, masteryLevel: 38 },
-  { word: 'tenacious', partOfSpeech: 'adj', studyCount: 30, masteryLevel: 21 },
-];
+type LibraryOverview = {
+  wordStatus: { label: string; value: number; color: string }[];
+  totalWords: number;
+  dailyStudy: { label: string; count: number }[];
+  stubbornWords: { word: string; partOfSpeech: string; studyCount: number; masteryLevel: number }[];
+};
 
 function LineChart({
   data,
@@ -76,7 +19,10 @@ function LineChart({
   data: { label: string; count: number }[];
   averageLine: number;
 }) {
-  const maxCount = Math.max(...data.map((d) => d.count), averageLine);
+  const counts = data.map((d) => d.count);
+  const rawMax = Math.max(...counts, averageLine);
+  const scaleMax = rawMax > 0 ? rawMax : 1;
+
   const width = 500;
   const height = 200;
   const padding = 40;
@@ -84,9 +30,18 @@ function LineChart({
   const chartHeight = height - padding * 2;
   const barWidth = chartWidth / data.length - 4;
 
+  // Guard against empty data
+  if (data.length === 0) {
+    return (
+      <div className="relative h-[200px] flex items-center justify-center">
+        <span className="text-sm text-gray-500">No study activity yet</span>
+      </div>
+    );
+  }
+
   // Round to 2 decimal places to prevent hydration mismatch from floating-point precision
   const averageY =
-    Math.round((height - padding - (averageLine / maxCount) * chartHeight) * 100) / 100;
+    Math.round((height - padding - (averageLine / scaleMax) * chartHeight) * 100) / 100;
 
   return (
     <div className="relative">
@@ -100,7 +55,7 @@ function LineChart({
         {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
           const y = Math.round(height - padding - ratio * chartHeight);
           // Add small epsilon before rounding to handle floating-point precision issues
-          const value = Math.round(maxCount * ratio + 1e-9);
+          const value = Math.round(scaleMax * ratio + 1e-9);
           return (
             <g key={ratio}>
               <line
@@ -140,7 +95,7 @@ function LineChart({
         {/* Bars */}
         {data.map((item, index) => {
           const x = Math.round(padding + index * (chartWidth / data.length) + 2);
-          const barHeight = Math.round((item.count / maxCount) * chartHeight * 100) / 100;
+          const barHeight = Math.round((item.count / scaleMax) * chartHeight * 100) / 100;
           const y = Math.round(height - padding - barHeight);
           return (
             <g key={index}>
@@ -195,6 +150,21 @@ function DonutChart({
   const total = data.reduce((acc, item) => acc + item.value, 0);
   const radius = 80;
   const circumference = 2 * Math.PI * radius;
+
+  if (total === 0) {
+    return (
+      <div className="relative flex items-center justify-center h-[200px]">
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-3xl font-bold text-gray-900">{centerValue}</span>
+          <span className="text-sm text-gray-500">{centerLabel}</span>
+        </div>
+        <svg width="200" height="200" className="transform -rotate-90">
+          <circle cx="100" cy="100" r={radius} fill="none" stroke="#f3f4f6" strokeWidth="24" />
+        </svg>
+      </div>
+    );
+  }
+
   let offset = 0;
 
   const segments = data.map((item) => {
@@ -233,13 +203,13 @@ function DonutChart({
 }
 
 // eslint-disable-next-line import/no-default-export
-export function LibraryView() {
+export function LibraryView({ data }: { data: LibraryOverview }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const totalPages = Math.ceil(stubbornWordsData.length / itemsPerPage);
+  const totalPages = Math.ceil(data.stubbornWords.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentItems = stubbornWordsData.slice(startIndex, startIndex + itemsPerPage);
+  const currentItems = data.stubbornWords.slice(startIndex, startIndex + itemsPerPage);
 
   const goToPreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -248,6 +218,13 @@ export function LibraryView() {
   const goToNextPage = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
+
+  const averageStudyCount =
+    data.dailyStudy.length > 0
+      ? Math.round(
+          data.dailyStudy.reduce((acc, item) => acc + item.count, 0) / data.dailyStudy.length,
+        )
+      : 0;
 
   return (
     <div className="flex-1">
@@ -267,9 +244,13 @@ export function LibraryView() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-col items-center">
-                <DonutChart data={wordStatusData} centerLabel="Total Words" centerValue="300" />
+                <DonutChart
+                  data={data.wordStatus}
+                  centerLabel="Total Words"
+                  centerValue={String(data.totalWords)}
+                />
                 <div className="mt-6 grid grid-cols-2 gap-3 w-full">
-                  {wordStatusData.map((item) => (
+                  {data.wordStatus.map((item) => (
                     <div key={item.label} className="flex items-center gap-2">
                       <div
                         className="h-3 w-3 rounded-full shrink-0"
@@ -357,7 +338,7 @@ export function LibraryView() {
             <CardTitle className="text-lg">Study Activity</CardTitle>
           </CardHeader>
           <CardContent>
-            <LineChart data={dailyStudyData} averageLine={averageStudyCount} />
+            <LineChart data={data.dailyStudy} averageLine={averageStudyCount} />
           </CardContent>
         </Card>
       </div>
