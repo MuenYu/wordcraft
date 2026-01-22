@@ -20,29 +20,26 @@ import {
 } from 'lucide-react';
 import { speakWord, stopSpeaking, isSpeaking, isSpeechSynthesisSupported } from '@/lib/utils';
 
-// Mock vocabulary list for study session
-const MOCK_VOCAB_LIST = [
-  {
-    word: 'Ephemeral',
-    partOfSpeech: 'adjective',
-    definition: 'lasting for a very short time',
-    example: 'The ephemeral beauty of cherry blossoms reminds us to appreciate fleeting moments.',
-  },
-  {
-    word: 'Serendipity',
-    partOfSpeech: 'noun',
-    definition: 'the occurrence of events by chance in a happy way',
-    example: 'Finding that rare book at the yard sale was pure serendipity.',
-  },
-  {
-    word: 'Luminous',
-    partOfSpeech: 'adjective',
-    definition: 'full of or shedding light; bright or shining',
-    example: 'The luminous moon reflected beautifully on the calm lake.',
-  },
-];
+interface StudyCard {
+  flashcardId: number;
+  vocabItemId: number;
+  word: string;
+  partOfSpeech: string;
+  definition: string;
+  example: string | null;
+  state: string;
+  dueAt: string;
+}
 
-// Calculate score based on sentence length (1 char = 1 point, 10+ chars = 10 points max)
+interface ReviewFeedback {
+  score: number;
+  isPassing: boolean;
+  word: string;
+}
+
+const BATCH_SIZE = 10;
+const REFILL_THRESHOLD = 5;
+
 function calculateScore(sentence: string): { score: number; isPassing: boolean } {
   const length = sentence.trim().length;
   const score = Math.min(length, 10);
@@ -55,35 +52,53 @@ function formatTime(seconds: number): string {
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
+function formatRelativeTime(date: Date | string): string {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  const now = new Date();
+  const diffMs = d.getTime() - now.getTime();
+  const diffMins = Math.round(diffMs / 60000);
+  const diffHours = Math.round(diffMs / 3600000);
+  const diffDays = Math.round(diffMs / 86400000);
+
+  if (diffMins < 0) {
+    return `${Math.abs(diffMins)} min overdue`;
+  } else if (diffMins < 60) {
+    return `in ${diffMins} min`;
+  } else if (diffHours < 24) {
+    return `in ${diffHours} hours`;
+  } else {
+    return `in ${diffDays} days`;
+  }
+}
+
 export function StudyView() {
   const [elapsedTime, setElapsedTime] = useState(0);
-  const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [completedWords, setCompletedWords] = useState<Set<number>>(new Set());
+  const [cards, setCards] = useState<StudyCard[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [completedIds, setCompletedIds] = useState<Set<number>>(new Set());
   const [sentence, setSentence] = useState('');
   const [hasSubmitted, setHasSubmitted] = useState(false);
-  const [feedback, setFeedback] = useState<{
-    score: number;
-    isPassing: boolean;
-    word: string;
-  } | null>(null);
+  const [feedback, setFeedback] = useState<ReviewFeedback | null>(null);
   const [showDefinition, setShowDefinition] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showCongrats, setShowCongrats] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Guard against rapid Enter key presses during state transition
   const justSubmitted = useRef(false);
+  const fetchLock = useRef(false);
 
-  const currentWord = MOCK_VOCAB_LIST[currentWordIndex];
-  const remainingCount = MOCK_VOCAB_LIST.length - completedWords.size;
-  const isSessionComplete = completedWords.size === MOCK_VOCAB_LIST.length;
+  const currentCard = cards[currentIndex];
+  const completedCount = completedIds.size;
+  const totalCards = cards.length;
+  const hasMoreCards = totalCards > 0 && currentIndex < totalCards;
+  const isSessionComplete = totalCards > 0 && completedCount >= totalCards;
 
-  // Check speech synthesis support after mount (avoids hydration mismatch)
   useEffect(() => {
     setSpeechSupported(isSpeechSynthesisSupported());
   }, []);
 
-  // Speech synthesis state management
   useEffect(() => {
     if (!speechSupported) return;
 
@@ -91,7 +106,6 @@ export function StudyView() {
       setIsPlaying(isSpeaking());
     };
 
-    // Update speaking state periodically since Web Speech API doesn't provide precise callbacks
     const interval = setInterval(updateSpeakingState, 100);
 
     return () => clearInterval(interval);
@@ -101,13 +115,77 @@ export function StudyView() {
     if (isPlaying) {
       stopSpeaking();
       setIsPlaying(false);
-    } else {
-      speakWord(currentWord.word);
+    } else if (currentCard) {
+      speakWord(currentCard.word);
       setIsPlaying(true);
     }
-  }, [isPlaying, currentWord.word]);
+  }, [isPlaying, currentCard]);
 
-  // Timer effect - stops when all words are completed
+  const fetchMoreCards = useCallback(async () => {
+    if (fetchLock.current) return;
+    fetchLock.current = true;
+
+    try {
+      const excludeIds = [...completedIds, ...cards.map((c) => c.flashcardId)];
+      const response = await fetch('/api/study/queue', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          limit: BATCH_SIZE,
+          excludeFlashcardIds: excludeIds,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch cards');
+
+      const data = await response.json();
+      if (data.cards && data.cards.length > 0) {
+        const newCards = data.cards.map((c: StudyCard) => ({
+          ...c,
+          dueAt: c.dueAt,
+        }));
+        setCards((prev) => {
+          const existingIds = new Set(prev.map((p) => p.flashcardId));
+          const filtered = newCards.filter((n: StudyCard) => !existingIds.has(n.flashcardId));
+          return [...prev, ...filtered];
+        });
+      }
+    } catch (err) {
+      console.error('Error fetching cards:', err);
+      setError('Failed to load cards');
+    } finally {
+      fetchLock.current = false;
+    }
+  }, [completedIds, cards]);
+
+  useEffect(() => {
+    const initialFetch = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch('/api/study/queue', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ limit: BATCH_SIZE, excludeFlashcardIds: [] }),
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch cards');
+
+        const data = await response.json();
+        if (data.cards && data.cards.length > 0) {
+          setCards(data.cards.map((c: StudyCard) => ({ ...c, dueAt: c.dueAt })));
+        }
+      } catch (err) {
+        console.error('Error fetching cards:', err);
+        setError('Failed to load cards. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initialFetch();
+  }, []);
+
   useEffect(() => {
     if (isSessionComplete) return;
 
@@ -118,29 +196,41 @@ export function StudyView() {
     return () => clearInterval(timer);
   }, [isSessionComplete]);
 
-  const handleSubmit = useCallback(() => {
-    if (!sentence.trim()) return;
+  const handleSubmit = useCallback(async () => {
+    if (!sentence.trim() || !currentCard) return;
 
     const { score, isPassing } = calculateScore(sentence);
 
+    try {
+      await fetch('/api/study/review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          flashcardId: currentCard.flashcardId,
+          result: isPassing ? 'pass' : 'fail',
+          score,
+          userInput: sentence,
+          feedbackText: isPassing
+            ? `Great job using "${currentCard.word}" in your sentence!`
+            : `Try adding more context to your sentence using "${currentCard.word}".`,
+        }),
+      });
+    } catch (err) {
+      console.error('Error submitting review:', err);
+    }
+
     setHasSubmitted(true);
-    setFeedback({ score, isPassing, word: currentWord.word });
+    setFeedback({ score, isPassing, word: currentCard.word });
 
     if (isPassing) {
-      setCompletedWords((prev) => new Set(prev).add(currentWordIndex));
+      setCompletedIds((prev) => new Set(prev).add(currentCard.flashcardId));
     }
-  }, [sentence, currentWord, currentWordIndex]);
+  }, [sentence, currentCard]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== 'Enter') return;
-
-    // Avoid IME composition issues
     if (e.nativeEvent.isComposing) return;
-
-    // Prevent key repeat from triggering actions
     if (e.repeat) return;
-
-    // Guard against double submission
     if (justSubmitted.current) return;
 
     if (feedback?.isPassing) {
@@ -158,19 +248,10 @@ export function StudyView() {
     }
   };
 
-  const handleNextWord = () => {
-    // Find next incomplete word
-    let nextIndex = currentWordIndex + 1;
-    if (nextIndex >= MOCK_VOCAB_LIST.length) {
-      nextIndex = 0;
-    }
+  const handleNextWord = useCallback(() => {
+    const nextIndex = currentIndex + 1;
 
-    // Only mark as complete if this was the last word and user passed
-    const wasLastWord = currentWordIndex === MOCK_VOCAB_LIST.length - 1;
-    const passedLastWord = feedback?.isPassing;
-
-    if (wasLastWord && passedLastWord) {
-      // User passed the last word - show congratulations
+    if (nextIndex >= totalCards) {
       stopSpeaking();
       setIsPlaying(false);
       setSentence('');
@@ -178,15 +259,18 @@ export function StudyView() {
       setFeedback(null);
       setShowCongrats(true);
     } else {
-      // Reset for next word
       setSentence('');
       setHasSubmitted(false);
       setFeedback(null);
       stopSpeaking();
       setIsPlaying(false);
-      setCurrentWordIndex(nextIndex);
+      setCurrentIndex(nextIndex);
+
+      if (totalCards - nextIndex <= REFILL_THRESHOLD) {
+        fetchMoreCards();
+      }
     }
-  };
+  }, [currentIndex, totalCards, fetchMoreCards]);
 
   const handleRetry = () => {
     setSentence('');
@@ -196,7 +280,6 @@ export function StudyView() {
     setIsPlaying(false);
   };
 
-  // Clear the Enter-press guard on key release (prevents key-repeat advancing)
   useEffect(() => {
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
@@ -208,13 +291,11 @@ export function StudyView() {
     return () => window.removeEventListener('keyup', handleKeyUp);
   }, []);
 
-  // Handle Enter key globally when input is disabled
   useEffect(() => {
     if (!hasSubmitted) return;
 
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
       if (e.key !== 'Enter' || e.repeat) return;
-
       e.preventDefault();
       e.stopPropagation();
 
@@ -230,7 +311,63 @@ export function StudyView() {
 
     window.addEventListener('keydown', handleGlobalKeyDown);
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
-  }, [hasSubmitted, feedback, currentWordIndex]);
+  }, [hasSubmitted, feedback, handleNextWord]);
+
+  if (loading) {
+    return (
+      <section className="flex-1 px-4 lg:px-8 py-8 max-w-4xl mx-auto w-full">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading your study session...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="flex-1 px-4 lg:px-8 py-8 max-w-4xl mx-auto w-full">
+        <Card className="mb-6">
+          <CardContent className="py-12 text-center">
+            <XCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Error Loading Session</h2>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <Button
+              onClick={() => window.location.reload()}
+              className="bg-pink-500 hover:bg-pink-600 text-white"
+            >
+              Try Again
+            </Button>
+          </CardContent>
+        </Card>
+      </section>
+    );
+  }
+
+  if (totalCards === 0) {
+    return (
+      <section className="flex-1 px-4 lg:px-8 py-8 max-w-4xl mx-auto w-full">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Study Session</h1>
+          <p className="mt-2 text-gray-600">
+            Practice using words in sentences and get AI feedback
+          </p>
+        </div>
+
+        <Card className="mb-6">
+          <CardContent className="py-12 text-center">
+            <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-gray-900 mb-2">All Caught Up!</h2>
+            <p className="text-gray-600">
+              No cards are due for review right now. Check back later when your cards are ready.
+            </p>
+          </CardContent>
+        </Card>
+      </section>
+    );
+  }
 
   return (
     <section className="flex-1 px-4 lg:px-8 py-8 max-w-4xl mx-auto w-full">
@@ -239,7 +376,6 @@ export function StudyView() {
         <p className="mt-2 text-gray-600">Practice using words in sentences and get AI feedback</p>
       </div>
 
-      {/* Section 2.1: Metadata */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <Card>
           <CardContent className="py-6">
@@ -263,7 +399,7 @@ export function StudyView() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Studied Today</p>
-                <p className="text-xl font-semibold">{completedWords.size} words</p>
+                <p className="text-xl font-semibold">{completedCount} cards</p>
               </div>
             </div>
           </CardContent>
@@ -277,14 +413,13 @@ export function StudyView() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Remaining</p>
-                <p className="text-xl font-semibold">{remainingCount} words</p>
+                <p className="text-xl font-semibold">{totalCards - completedCount} cards</p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Congratulations Section - shown when all words are completed */}
       {showCongrats ? (
         <Card className="mb-6">
           <CardContent className="py-12 text-center">
@@ -297,13 +432,24 @@ export function StudyView() {
               Congratulations!
             </h2>
             <p className="text-muted-foreground mb-6">
-              You&apos;ve completed all {MOCK_VOCAB_LIST.length} words in this session.
+              You&apos;ve completed all {totalCards} cards in this session.
             </p>
+            <Button
+              onClick={() => {
+                setShowCongrats(false);
+                setCompletedIds(new Set());
+                setCurrentIndex(0);
+                setElapsedTime(0);
+                fetchMoreCards();
+              }}
+              className="bg-pink-500 hover:bg-pink-600 text-white"
+            >
+              Start New Session
+            </Button>
           </CardContent>
         </Card>
       ) : (
         <>
-          {/* Section 2.2: Current Word */}
           <Card className="mb-6">
             <CardHeader>
               <CardTitle className="flex items-center justify-between gap-2">
@@ -320,13 +466,12 @@ export function StudyView() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">
-                <h2 className="text-3xl font-bold text-pink-500">{currentWord.word}</h2>
+                <h2 className="text-3xl font-bold text-pink-500">{currentCard.word}</h2>
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 w-fit">
-                  {currentWord.partOfSpeech}
+                  {currentCard.partOfSpeech}
                 </span>
-                {/* Pronunciation controls */}
                 <div className="flex items-center gap-2 mt-2 sm:mt-0 sm:ml-auto">
-                  {speechSupported ? (
+                  {speechSupported && (
                     <>
                       <Button
                         variant="outline"
@@ -343,21 +488,23 @@ export function StudyView() {
                         <span className="text-pink-600 dark:text-pink-400">Pronunciation</span>
                       </Button>
                     </>
-                  ) : (
-                    <span className="text-xs text-muted-foreground">Speech not supported</span>
                   )}
                 </div>
               </div>
               {showDefinition && (
                 <p className="text-muted-foreground mb-2">
                   <span className="font-medium text-foreground">Definition:</span>{' '}
-                  {currentWord.definition}
+                  {currentCard.definition}
+                </p>
+              )}
+              {currentCard.example && (
+                <p className="text-sm text-muted-foreground italic">
+                  &ldquo;{currentCard.example}&rdquo;
                 </p>
               )}
             </CardContent>
           </Card>
 
-          {/* Section 2.3: Input Box */}
           <Card className="mb-6">
             <CardHeader>
               <CardTitle className="text-lg">Create Your Sentence</CardTitle>
@@ -365,7 +512,7 @@ export function StudyView() {
             <CardContent>
               <div className="relative">
                 <Input
-                  placeholder={`Write a sentence using "${currentWord.word}"...`}
+                  placeholder={`Write a sentence using "${currentCard.word}"...`}
                   value={sentence}
                   onChange={(e) => setSentence(e.target.value)}
                   onKeyDown={handleKeyDown}
@@ -383,7 +530,6 @@ export function StudyView() {
             </CardContent>
           </Card>
 
-          {/* Section 2.4: AI Feedback - min-height container prevents layout shift */}
           <div className="min-h-75">
             {feedback && (
               <Card className="mb-6">
@@ -394,7 +540,6 @@ export function StudyView() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {/* Correctness indicator */}
                   <div className="flex items-center gap-3 mb-4 p-4 rounded-lg bg-muted/50">
                     {feedback.isPassing ? (
                       <>
@@ -420,7 +565,6 @@ export function StudyView() {
                     )}
                   </div>
 
-                  {/* Score */}
                   <div className="mb-4">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium">Score</span>
@@ -434,7 +578,6 @@ export function StudyView() {
                     </div>
                   </div>
 
-                  {/* Feedback message */}
                   <div className="p-4 rounded-lg bg-primary/5 border border-primary/10 mb-4">
                     <p className="text-sm">
                       {feedback.isPassing
@@ -443,7 +586,6 @@ export function StudyView() {
                     </p>
                   </div>
 
-                  {/* Next button */}
                   <div className="mt-6 flex justify-end gap-3">
                     <Button
                       variant="outline"
