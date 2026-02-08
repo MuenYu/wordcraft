@@ -6,6 +6,7 @@ import {
   timestamp,
   integer,
   numeric,
+  jsonb,
   customType,
   index,
   uniqueIndex,
@@ -54,6 +55,18 @@ export type VocabListSource = (typeof vocabListSources)[number];
 export const reviewResults = ['pass', 'fail'] as const;
 
 export type ReviewResult = (typeof reviewResults)[number];
+
+export const vocabImportStatuses = [
+  'queued',
+  'parsing',
+  'importing',
+  'completed',
+  'partial_success',
+  'failed',
+  'canceled',
+] as const;
+
+export type VocabImportStatus = (typeof vocabImportStatuses)[number];
 
 /**
  * Users table (existing).
@@ -113,6 +126,7 @@ export const vocabItems = pgTable(
       .notNull()
       .references(() => vocabLists.id, { onDelete: 'cascade' }),
     term: citext('term').notNull(),
+    normalizedTerm: varchar('normalized_term', { length: 255 }).notNull(),
     partOfSpeech: varchar('part_of_speech', { length: 32 }).notNull(),
     definition: text('definition').notNull(),
     exampleSentence: text('example_sentence'),
@@ -124,8 +138,52 @@ export const vocabItems = pgTable(
       .$onUpdate(() => new Date()),
   },
   (table) => [
-    uniqueIndex('vocab_items_list_term_idx').on(table.listId, table.term),
+    uniqueIndex('vocab_items_list_normalized_term_idx').on(table.listId, table.normalizedTerm),
     index('vocab_items_list_idx').on(table.listId),
+  ],
+);
+
+export const vocabImports = pgTable(
+  'vocab_imports',
+  {
+    id: serial('id').primaryKey(),
+    userId: integer('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    listId: integer('list_id').references(() => vocabLists.id, { onDelete: 'set null' }),
+    status: varchar('status', { length: 20 }).notNull().default('queued'),
+    source: varchar('source', { length: 20 }).notNull().default('csv'),
+    originalFilename: varchar('original_filename', { length: 255 }).notNull(),
+    idempotencyKey: varchar('idempotency_key', { length: 120 }),
+    payload: jsonb('payload').$type<{
+      csvContent: string;
+      listId?: number;
+      listName?: string;
+    }>(),
+    totalCount: integer('total_count').notNull().default(0),
+    insertedCount: integer('inserted_count').notNull().default(0),
+    duplicateCount: integer('duplicate_count').notNull().default(0),
+    invalidCount: integer('invalid_count').notNull().default(0),
+    errorSummary: jsonb('error_summary').$type<{
+      sample: Array<{ row: number; code: string; message: string }>;
+      totalErrors: number;
+    }>(),
+    lastError: text('last_error'),
+    startedAt: timestamp('started_at', { mode: 'date' }),
+    finishedAt: timestamp('finished_at', { mode: 'date' }),
+    createdAt: timestamp('created_at', { mode: 'date' })
+      .notNull()
+      .default(sql`now()`),
+    updatedAt: timestamp('updated_at', { mode: 'date' })
+      .notNull()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [
+    index('vocab_imports_user_created_idx').on(table.userId, table.createdAt),
+    index('vocab_imports_status_created_idx').on(table.status, table.createdAt),
+    uniqueIndex('vocab_imports_user_idempotency_idx')
+      .on(table.userId, table.idempotencyKey)
+      .where(sql`${table.idempotencyKey} IS NOT NULL`),
   ],
 );
 
@@ -195,6 +253,7 @@ export const reviews = pgTable(
  */
 export const usersRelations = relations(users, ({ many }) => ({
   vocabLists: many(vocabLists),
+  vocabImports: many(vocabImports),
 }));
 
 export const vocabListsRelations = relations(vocabLists, ({ one, many }) => ({
@@ -203,6 +262,18 @@ export const vocabListsRelations = relations(vocabLists, ({ one, many }) => ({
     references: [users.id],
   }),
   vocabItems: many(vocabItems),
+  imports: many(vocabImports),
+}));
+
+export const vocabImportsRelations = relations(vocabImports, ({ one }) => ({
+  user: one(users, {
+    fields: [vocabImports.userId],
+    references: [users.id],
+  }),
+  list: one(vocabLists, {
+    fields: [vocabImports.listId],
+    references: [vocabLists.id],
+  }),
 }));
 
 export const vocabItemsRelations = relations(vocabItems, ({ one, many }) => ({
@@ -237,6 +308,8 @@ export type VocabList = typeof vocabLists.$inferSelect;
 export type NewVocabList = typeof vocabLists.$inferInsert;
 export type VocabItem = typeof vocabItems.$inferSelect;
 export type NewVocabItem = typeof vocabItems.$inferInsert;
+export type VocabImport = typeof vocabImports.$inferSelect;
+export type NewVocabImport = typeof vocabImports.$inferInsert;
 export type Flashcard = typeof flashcards.$inferSelect;
 export type NewFlashcard = typeof flashcards.$inferInsert;
 export type Review = typeof reviews.$inferSelect;
