@@ -210,6 +210,7 @@ async function seed() {
       vocabItemsData.map((item) => ({
         listId: list.id,
         term: item.term,
+        normalizedTerm: item.term.trim().toLowerCase().replace(/\s+/g, ' '),
         partOfSpeech: item.partOfSpeech,
         definition: item.definition,
         exampleSentence: item.exampleSentence,
